@@ -212,6 +212,13 @@ class ServerCommandService
         return $this->streamCommand($cmd, $log);
     }
 
+    public function runMigrateFresh(string $folder, DeploymentLog $log): bool
+    {
+        $path = escapeshellarg("{$this->wwwPath}/{$folder}");
+        $cmd  = "cd {$path} && php artisan migrate:fresh --force 2>&1";
+        return $this->streamCommand($cmd, $log);
+    }
+
     public function runSeeders(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");

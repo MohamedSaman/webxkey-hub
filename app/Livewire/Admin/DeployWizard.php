@@ -248,6 +248,32 @@ class DeployWizard extends Component
         $this->stepFailed = !$success;
     }
 
+    public function runMigrateFresh(): void
+    {
+        $app = Application::findOrFail($this->applicationId);
+        $log = $app->deploymentLogs()->create([
+            'step'      => 7,
+            'step_name' => 'Database Migrate Fresh',
+            'command'   => 'php artisan migrate:fresh --force',
+            'status'    => 'pending',
+        ]);
+        $this->currentLogId = $log->id;
+        $this->stepRunning = true;
+
+        $success = $this->cmd->runMigrateFresh($this->folderName, $log);
+        $this->stepRunning = false;
+        $this->migrationDone = $success;
+        $this->stepFailed = !$success;
+    }
+
+    public function skipMigrate(): void
+    {
+        $this->migrationDone = true;
+        $this->stepDone = true;
+        $this->stepFailed = false;
+        $this->currentLogId = null;
+    }
+
     public function runSeeders(): void
     {
         $app = Application::findOrFail($this->applicationId);

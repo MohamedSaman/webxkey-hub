@@ -180,15 +180,24 @@
                 {{-- ── STEP 6: Migrate ── --}}
                 @if($step === 6)
                     <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 7 — Database migrations</div>
-                    <div style="display:flex;gap:10px;margin-bottom:14px;">
+                    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
                         <button wire:click="runMigrate" class="btn btn-primary" wire:loading.attr="disabled" @if($migrationDone) disabled @endif>
                             <span wire:loading.remove wire:target="runMigrate">Run Migrations</span>
                             <span wire:loading wire:target="runMigrate"><span class="spinner"></span> Migrating...</span>
+                        </button>
+                        <button wire:click="runMigrateFresh" class="btn" wire:loading.attr="disabled" style="color:#BA7517;border-color:#BA7517;">
+                            <span wire:loading.remove wire:target="runMigrateFresh">Fresh (drop &amp; re-run)</span>
+                            <span wire:loading wire:target="runMigrateFresh"><span class="spinner"></span> Running...</span>
                         </button>
                         <button wire:click="runSeeders" class="btn" wire:loading.attr="disabled" @if(!$migrationDone) disabled style="opacity:0.4" @endif>
                             <span wire:loading.remove wire:target="runSeeders">Run Seeders (optional)</span>
                             <span wire:loading wire:target="runSeeders"><span class="spinner"></span> Seeding...</span>
                         </button>
+                        @if($stepFailed)
+                            <button wire:click="skipMigrate" class="btn" style="color:#BA7517;border-color:#BA7517;">
+                                Ignore & Continue →
+                            </button>
+                        @endif
                     </div>
                     @if($terminalOutput)
                         <div class="terminal" style="min-height:80px;max-height:220px;overflow-y:auto;" wire:poll.500ms="$refresh">{{ $terminalOutput }}</div>
