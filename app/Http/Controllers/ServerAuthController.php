@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 class ServerAuthController extends Controller
 {
@@ -26,37 +27,12 @@ class ServerAuthController extends Controller
         $password = $request->input('sudo_password');
         $safePass = escapeshellarg($password);
 
-        // Verify by running a harmless privileged command via proc_open so the
-        // password is properly written to sudo's stdin (shell_exec pipes do not
-        // reliably feed sudo -S in a non-interactive PHP context).
-        $process = proc_open(
-            "sudo -S -p '' whoami",
-            [
-                0 => ['pipe', 'r'],  // stdin  – we write the password here
-                1 => ['pipe', 'w'],  // stdout – "root" on success
-                2 => ['pipe', 'w'],  // stderr – sudo error messages
-            ],
-            $pipes
-        );
+        // Validate against the bcrypt hash stored in DASHBOARD_PASSWORD env var.
+        // www-data runs with NOPASSWD sudo, so no password needs to be piped
+        // to sudo for actual server commands.
+        $storedHash = config('app.dashboard_password');
 
-        if (!is_resource($process)) {
-            return back()->withErrors([
-                'sudo_password' => 'Server error: could not spawn sudo process.',
-            ]);
-        }
-
-        fwrite($pipes[0], $password . "\n");
-        fclose($pipes[0]);
-
-        $stdout = trim(stream_get_contents($pipes[1]));
-        $stderr = trim(stream_get_contents($pipes[2]));
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        proc_close($process);
-
-        \Log::debug('ServerAuth sudo check', ['stdout' => $stdout, 'stderr' => $stderr]);
-
-        if ($stdout !== 'root') {
+        if (!$storedHash || !Hash::check($password, $storedHash)) {
             return back()->withErrors([
                 'sudo_password' => 'Incorrect server password. Please try again.',
             ]);

@@ -41,6 +41,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'dashboard_password' => env('DASHBOARD_PASSWORD'),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

@@ -11,27 +11,12 @@ class ServerCommandService
     private string $nginxAvailable = '/etc/nginx/sites-available';
     private string $nginxEnabled = '/etc/nginx/sites-enabled';
 
-    // Build a sudo prefix that feeds the session password via stdin.
-    // Optional $asUser runs the command as a different OS user (e.g. 'webxkey').
-    // Falls back to plain 'sudo' when called from the CLI (health:check command).
+    // Build a sudo prefix. www-data is configured with NOPASSWD in sudoers,
+    // so no password needs to be piped. Optional $asUser runs the command
+    // as a different OS user (e.g. 'webxkey').
     private function sudo(string $asUser = ''): string
     {
         $userFlag = $asUser ? " -u {$asUser}" : '';
-
-        if (!app()->runningInConsole()) {
-            $encrypted = session('server_sudo_password');
-            if ($encrypted) {
-                try {
-                    $password = Crypt::decryptString($encrypted);
-                    $safePass = escapeshellarg($password);
-                    // -S reads password from stdin; -p '' suppresses the "Password:" prompt
-                    return "echo {$safePass} | sudo -S -p ''{$userFlag}";
-                } catch (\Exception) {
-                    // decryption failed — fall through to plain sudo
-                }
-            }
-        }
-
         return "sudo{$userFlag}";
     }
 
