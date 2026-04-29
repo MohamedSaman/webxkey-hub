@@ -12,10 +12,12 @@ class Dashboard extends Component
 {
     public array $stats = [];
     public array $quickOutputs = [];
+    public array $serverStats = [];
 
     public function mount(): void
     {
         $this->loadStats();
+        $this->serverStats = (new ServerCommandService())->getServerStats();
     }
 
     private function loadStats(): void
