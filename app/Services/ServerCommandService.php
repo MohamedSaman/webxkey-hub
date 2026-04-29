@@ -104,14 +104,15 @@ class ServerCommandService
     public function composerUpdate(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $cmd = "cd {$path} && composer update --no-interaction 2>&1";
+        $cmd  = "cd {$path} && composer update --no-interaction 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
     public function npmBuild(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $cmd = "cd {$path} && npm install --cache /tmp/.npm-cache 2>&1 && npm run build 2>&1";
+        $cmd = "cd {$path} && npm install --cache /tmp/.npm-cache 2>&1 "
+             . "&& PATH=\"\$(pwd)/node_modules/.bin:\$PATH\" npm run build 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
