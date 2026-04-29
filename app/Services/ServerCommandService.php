@@ -188,6 +188,27 @@ class ServerCommandService
         return $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --show 2>&1");
     }
 
+    public function getEnvValue(string $folder, string $key): string
+    {
+        $envPath = "{$this->wwwPath}/{$folder}/.env";
+        if (!file_exists($envPath)) return '';
+        preg_match("/^{$key}=(.*)$/m", file_get_contents($envPath), $m);
+        return trim($m[1] ?? '');
+    }
+
+    public function setEnvValue(string $folder, string $key, string $value): bool
+    {
+        $envPath = "{$this->wwwPath}/{$folder}/.env";
+        if (!file_exists($envPath)) return false;
+        $content = file_get_contents($envPath);
+        if (preg_match("/^{$key}=/m", $content)) {
+            $content = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $content);
+        } else {
+            $content .= "\n{$key}={$value}";
+        }
+        return file_put_contents($envPath, $content) !== false;
+    }
+
     public function writeAppKey(string $folder, string $key): bool
     {
         $envPath = "{$this->wwwPath}/{$folder}/.env";

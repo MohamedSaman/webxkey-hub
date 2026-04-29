@@ -15,6 +15,7 @@ class SiteDetail extends Component
     public string $actionOutput = '';
     public bool $isRunning = false;
     public bool $inMaintenance = false;
+    public bool $debugMode = false;
     public array $serverStats = [];
 
     public function mount(Application $application): void
@@ -22,6 +23,8 @@ class SiteDetail extends Component
         $this->application = $application;
         $this->inMaintenance = false;
         $this->serverStats = [];
+        $raw = $this->cmd()->getEnvValue($application->folder_path, 'APP_DEBUG');
+        $this->debugMode = strtolower($raw) === 'true';
     }
 
     private function cmd(): ServerCommandService
