@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Application;
 use App\Models\DeploymentLog;
+use App\Models\Payment;
 use App\Services\ServerCommandService;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -17,6 +18,7 @@ class SiteDetail extends Component
     public bool $inMaintenance = false;
     public bool $debugMode = false;
     public array $serverStats = [];
+    public ?Payment $currentMonthPayment = null;
 
     // Log viewer
     public string $logOutput = '';
@@ -30,6 +32,10 @@ class SiteDetail extends Component
         $this->serverStats = [];
         $raw = $this->cmd()->getEnvValue($application->folder_path, 'APP_DEBUG');
         $this->debugMode = strtolower($raw) === 'true';
+        $this->currentMonthPayment = Payment::where('application_id', $this->application->id)
+            ->where('year', now()->year)
+            ->where('month', now()->month)
+            ->first();
     }
 
     private function cmd(): ServerCommandService

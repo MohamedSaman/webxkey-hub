@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ServerAuthController;
+use App\Livewire\Admin\BillingManager;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\ApplicationsList;
 use App\Livewire\Admin\DeployWizard;
@@ -18,4 +19,5 @@ Route::middleware('server-auth')->group(function () {
     Route::get('/applications', ApplicationsList::class)->name('applications');
     Route::get('/deploy', DeployWizard::class)->name('deploy');
     Route::get('/applications/{application}', SiteDetail::class)->name('applications.show');
+    Route::get('/billing', BillingManager::class)->name('billing');
 });

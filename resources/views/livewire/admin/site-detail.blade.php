@@ -145,6 +145,24 @@
                     <div class="info-row"><span class="info-key">Branch</span><span>{{ $application->branch }}</span></div>
                     <div class="info-row"><span class="info-key">Database</span><span>{{ $application->db_name ?? '—' }}</span></div>
                     <div class="info-row">
+                        <span class="info-key">Billing</span>
+                        @if($currentMonthPayment && $currentMonthPayment->status === 'paid')
+                            <span style="display:inline-flex;align-items:center;gap:6px;">
+                                <span class="badge badge-green" style="font-size:11px;">Paid ✓</span>
+                                <span style="font-size:11px;color:var(--text-muted);">{{ $currentMonthPayment->paid_at?->format('d M Y') }}</span>
+                            </span>
+                        @elseif($currentMonthPayment && $currentMonthPayment->status === 'free')
+                            <span class="badge" style="background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,0.2);font-size:11px;">FREE</span>
+                        @elseif($currentMonthPayment && $currentMonthPayment->status === 'due')
+                            <span style="display:inline-flex;align-items:center;gap:6px;">
+                                <span class="badge badge-red" style="font-size:11px;">Due</span>
+                                <span style="font-size:11px;color:var(--text-muted);">2,000 LKR</span>
+                            </span>
+                        @else
+                            <span style="color:var(--text-muted);">—</span>
+                        @endif
+                    </div>
+                    <div class="info-row">
                         <span class="info-key">APP_DEBUG</span>
                         <button wire:click="toggleDebug" style="display:flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;">
                             <span style="display:inline-flex;align-items:center;width:36px;height:20px;border-radius:10px;padding:2px;transition:background .2s;background:{{ $debugMode ? '#A32D2D' : '#ccc' }};">

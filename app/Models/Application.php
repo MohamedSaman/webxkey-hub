@@ -28,6 +28,11 @@ class Application extends Model
         return $this->hasMany(HealthCheck::class);
     }
 
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function latestHealth(): ?HealthCheck
     {
         return $this->healthChecks()->latest('checked_at')->first();

@@ -41,6 +41,13 @@
             </svg>
             Deploy New App
         </a>
+        <a href="{{ route('billing') }}" class="nav-item {{ request()->routeIs('billing') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="1" y="3" width="14" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M1 6h14M5 10h2M9 10h2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            </svg>
+            Billing
+        </a>
 
         <div class="nav-section">Server</div>
         <a href="{{ route('applications') }}" class="nav-item {{ request()->routeIs('deployments') ? 'active' : '' }}">
