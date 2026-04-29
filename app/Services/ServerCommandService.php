@@ -362,20 +362,23 @@ class ServerCommandService
     {
         $path       = escapeshellarg("{$this->wwwPath}/{$folder}");
         $safeBranch = escapeshellarg($branch);
-        $cmd = "cd {$path} && git pull origin {$safeBranch} 2>&1";
+        $sudo       = $this->sudo('webxkey');
+        $cmd = "{$sudo} git -C {$path} pull origin {$safeBranch} 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
     public function gitStatus(string $folder): string
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        return $this->runQuick("cd {$path} && git status");
+        $sudo = $this->sudo('webxkey');
+        return $this->runQuick("{$sudo} git -C {$path} status 2>&1");
     }
 
     public function gitLog(string $folder, int $lines = 5): string
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        return $this->runQuick("cd {$path} && git log --oneline -{$lines}");
+        $sudo = $this->sudo('webxkey');
+        return $this->runQuick("{$sudo} git -C {$path} log --oneline -{$lines} 2>&1");
     }
 
     public function optimizeClear(string $folder): string
