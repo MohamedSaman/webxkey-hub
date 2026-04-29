@@ -26,15 +26,39 @@ class ServerAuthController extends Controller
         $password = $request->input('sudo_password');
         $safePass = escapeshellarg($password);
 
-        // Verify by running a harmless privileged command
-        $output = shell_exec("echo {$safePass} | sudo -S -p '' whoami 2>&1");
-        $result = trim($output ?? '');
+        // Verify by running a harmless privileged command via proc_open so the
+        // password is properly written to sudo's stdin (shell_exec pipes do not
+        // reliably feed sudo -S in a non-interactive PHP context).
+        $process = proc_open(
+            "sudo -S -p '' whoami",
+            [
+                0 => ['pipe', 'r'],  // stdin  – we write the password here
+                1 => ['pipe', 'w'],  // stdout – "root" on success
+                2 => ['pipe', 'w'],  // stderr – sudo error messages
+            ],
+            $pipes
+        );
 
-        \Log::debug('ServerAuth sudo check', ['output' => $output, 'result' => $result]);
-
-        if ($result !== 'root') {
+        if (!is_resource($process)) {
             return back()->withErrors([
-                'sudo_password' => 'Incorrect server password. Please try again. [debug: ' . addslashes($result) . ']',
+                'sudo_password' => 'Server error: could not spawn sudo process.',
+            ]);
+        }
+
+        fwrite($pipes[0], $password . "\n");
+        fclose($pipes[0]);
+
+        $stdout = trim(stream_get_contents($pipes[1]));
+        $stderr = trim(stream_get_contents($pipes[2]));
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        \Log::debug('ServerAuth sudo check', ['stdout' => $stdout, 'stderr' => $stderr]);
+
+        if ($stdout !== 'root') {
+            return back()->withErrors([
+                'sudo_password' => 'Incorrect server password. Please try again.',
             ]);
         }
 

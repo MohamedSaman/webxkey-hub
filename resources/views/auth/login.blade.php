@@ -27,7 +27,7 @@
 <body>
     <div class="card">
         <div class="logo">
-            <div class="logo-mark">⬡ WebXKey</div>
+            <div class="logo-mark">⬡ WebkKey</div>
             <div class="logo-sub">Server Manager</div>
         </div>
 
