@@ -211,7 +211,7 @@ class ServerCommandService
 
     public function getUnregisteredFolders(array $registeredFolders): array
     {
-        $skip = ['.', '..', 'html', 'webxkey-hub'];
+        $skip = ['.', '..', 'html'];
         $all  = scandir($this->wwwPath) ?: [];
         return array_values(array_filter($all, function ($f) use ($skip, $registeredFolders) {
             return !in_array($f, $skip)
