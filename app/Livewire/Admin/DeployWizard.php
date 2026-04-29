@@ -174,10 +174,29 @@ class DeployWizard extends Component
     {
         $this->validate(['dbName' => 'required|alpha_dash']);
 
-        $success = $this->cmd->createDatabase($this->dbName, $this->dbUser, $this->dbPassword);
+        $app = Application::findOrFail($this->applicationId);
+        $log = $app->deploymentLogs()->create([
+            'step'      => 5,
+            'step_name' => 'Create Database',
+            'command'   => "CREATE DATABASE IF NOT EXISTS `{$this->dbName}`",
+            'status'    => 'pending',
+        ]);
+        $this->currentLogId = $log->id;
+        $this->stepRunning = true;
+
+        $success = $this->cmd->createDatabase($this->dbName, $log, $this->dbUser, $this->dbPassword);
         Application::where('id', $this->applicationId)->update(['db_name' => $this->dbName]);
+        $this->stepRunning = false;
         $this->stepDone = $success;
         $this->stepFailed = !$success;
+    }
+
+    public function skipDatabase(): void
+    {
+        Application::where('id', $this->applicationId)->update(['db_name' => $this->dbName]);
+        $this->stepDone = true;
+        $this->stepFailed = false;
+        $this->currentLogId = null;
     }
 
     // ── Step 6: Nginx ────────────────────────────────────────────────────

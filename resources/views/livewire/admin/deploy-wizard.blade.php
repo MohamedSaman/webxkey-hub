@@ -136,11 +136,21 @@
                         <input wire:model="dbName" class="form-input" type="text" placeholder="clinic_db">
                         <div class="form-hint">Will run: <code>CREATE DATABASE IF NOT EXISTS `{{ $dbName }}`;</code></div>
                     </div>
-                    <button wire:click="runDatabaseCreate" class="btn btn-primary" wire:loading.attr="disabled">
-                        <span wire:loading.remove wire:target="runDatabaseCreate">Create Database</span>
-                        <span wire:loading wire:target="runDatabaseCreate"><span class="spinner"></span> Creating...</span>
-                    </button>
-                    @if($stepDone)
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <button wire:click="runDatabaseCreate" class="btn btn-primary" wire:loading.attr="disabled">
+                            <span wire:loading.remove wire:target="runDatabaseCreate">Create Database</span>
+                            <span wire:loading wire:target="runDatabaseCreate"><span class="spinner"></span> Creating...</span>
+                        </button>
+                        @if($stepFailed)
+                            <button wire:click="skipDatabase" class="btn" style="color:#BA7517;border-color:#BA7517;">
+                                Ignore & Continue →
+                            </button>
+                        @endif
+                    </div>
+                    @if($terminalOutput)
+                        <div class="terminal" style="margin-top:12px;max-height:200px;overflow-y:auto;">{{ $terminalOutput }}</div>
+                    @endif
+                    @if($stepDone && !$stepFailed)
                         <div class="terminal" style="margin-top:12px;min-height:40px;">
                             <span style="color:#639922">✓ Database '{{ $dbName }}' created successfully</span>
                         </div>

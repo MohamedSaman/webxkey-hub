@@ -154,14 +154,13 @@ class ServerCommandService
         return $this->runQuick("cd {$path} && php artisan key:generate --show");
     }
 
-    public function createDatabase(string $dbName, string $dbUser = 'webxkey', string $dbPassword = ''): bool
+    public function createDatabase(string $dbName, DeploymentLog $log, string $dbUser = 'webxkey', string $dbPassword = ''): bool
     {
         $safeName = preg_replace('/[^a-zA-Z0-9_]/', '', $dbName);
         $userFlag = "-u " . escapeshellarg($dbUser);
         $passFlag = $dbPassword ? "-p" . escapeshellarg($dbPassword) : '';
         $cmd = "mysql {$userFlag} {$passFlag} -e " . escapeshellarg("CREATE DATABASE IF NOT EXISTS `{$safeName}`;") . " 2>&1";
-        $output = $this->runQuick($cmd);
-        return empty($output) || !str_contains(strtolower($output), 'error');
+        return $this->streamCommand($cmd, $log);
     }
 
     public function writeNginxConfig(string $domain, string $folder, string $phpVersion = '8.3'): bool
