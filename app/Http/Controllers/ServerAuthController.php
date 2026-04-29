@@ -30,9 +30,11 @@ class ServerAuthController extends Controller
         $output = shell_exec("echo {$safePass} | sudo -S -p '' whoami 2>&1");
         $result = trim($output ?? '');
 
+        \Log::debug('ServerAuth sudo check', ['output' => $output, 'result' => $result]);
+
         if ($result !== 'root') {
             return back()->withErrors([
-                'sudo_password' => 'Incorrect server password. Please try again.',
+                'sudo_password' => 'Incorrect server password. Please try again. [debug: ' . addslashes($result) . ']',
             ]);
         }
 
