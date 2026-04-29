@@ -193,11 +193,9 @@
                             <span wire:loading.remove wire:target="runSeeders">Run Seeders (optional)</span>
                             <span wire:loading wire:target="runSeeders"><span class="spinner"></span> Seeding...</span>
                         </button>
-                        @if($stepFailed)
-                            <button wire:click="skipMigrate" class="btn" style="color:#BA7517;border-color:#BA7517;">
-                                Ignore & Continue →
-                            </button>
-                        @endif
+                        <button wire:click="skipMigrate" class="btn" style="color:#BA7517;border-color:#BA7517;">
+                            Mark Done & Continue →
+                        </button>
                     </div>
                     @if($terminalOutput)
                         <div class="terminal" style="min-height:80px;max-height:220px;overflow-y:auto;" wire:poll.500ms="$refresh">{{ $terminalOutput }}</div>
