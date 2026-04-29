@@ -196,6 +196,19 @@ class ServerCommandService
         return $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --show 2>&1");
     }
 
+    public function readLog(string $folder, int $lines = 100): string
+    {
+        $logPath = escapeshellarg("{$this->wwwPath}/{$folder}/storage/logs/laravel.log");
+        $output  = $this->runQuick("tail -n {$lines} {$logPath} 2>&1");
+        return $output ?: '(log file is empty)';
+    }
+
+    public function clearLog(string $folder): bool
+    {
+        $logPath = "{$this->wwwPath}/{$folder}/storage/logs/laravel.log";
+        return file_put_contents($logPath, '') !== false;
+    }
+
     public function getUnregisteredFolders(array $registeredFolders): array
     {
         $skip = ['.', '..', 'html', 'webxkey-hub'];

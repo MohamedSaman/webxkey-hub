@@ -69,15 +69,69 @@
                 </div>
 
                 {{-- Action Output --}}
-                <div class="panel">
+                <div class="panel" style="margin-bottom:12px;">
                     <div class="panel-title">Action Output</div>
                     <div class="terminal" style="min-height:160px;max-height:300px;overflow-y:auto;">
                         @if($actionOutput)
                             {{ $actionOutput }}
                         @else
-                            <span style="color:#888780;">Click any action above to see live output...</span>
+                            <span style="color:var(--text-muted);">Click any action above to see live output...</span>
                         @endif
                     </div>
+                </div>
+
+                {{-- Laravel Log Viewer --}}
+                <div class="panel">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+                        <span style="font-size:13px;font-weight:600;color:var(--text-white);">Laravel Log</span>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <select wire:model.live="logLines" style="background:var(--bg-input);border:1px solid var(--border-strong);color:var(--text-secondary);border-radius:var(--radius-sm);padding:4px 8px;font-size:11.5px;cursor:pointer;">
+                                <option value="50">Last 50 lines</option>
+                                <option value="100">Last 100 lines</option>
+                                <option value="200">Last 200 lines</option>
+                                <option value="500">Last 500 lines</option>
+                            </select>
+                            <button wire:click="loadLog" class="btn btn-sm" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="loadLog">⟳ Load Log</span>
+                                <span wire:loading wire:target="loadLog"><span class="spinner"></span></span>
+                            </button>
+                            @if($logLoaded)
+                                <button wire:click="clearLog" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Clear laravel.log for {{ $application->name }}?')">
+                                    Clear
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($logLoaded)
+                        @php
+                            // Colorize log lines
+                            $lines = explode("\n", $logOutput);
+                        @endphp
+                        <div class="terminal" style="min-height:200px;max-height:480px;overflow-y:auto;font-size:11.5px;line-height:1.7;" id="log-output">
+                            @foreach($lines as $line)
+                                @if(str_contains($line, '.ERROR') || str_contains($line, 'ERROR:'))
+                                    <div style="color:#f87171;">{{ $line }}</div>
+                                @elseif(str_contains($line, '.WARNING') || str_contains($line, 'WARNING:'))
+                                    <div style="color:#fbbf24;">{{ $line }}</div>
+                                @elseif(str_contains($line, '.INFO') || str_contains($line, 'INFO:'))
+                                    <div style="color:#60a5fa;">{{ $line }}</div>
+                                @elseif(str_contains($line, 'Stack trace') || str_contains($line, '#'))
+                                    <div style="color:#6b7280;">{{ $line }}</div>
+                                @else
+                                    <div>{{ $line }}</div>
+                                @endif
+                            @endforeach
+                        </div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
+                            /var/www/{{ $application->folder_path }}/storage/logs/laravel.log
+                        </div>
+                    @else
+                        <div style="text-align:center;padding:32px;color:var(--text-muted);font-size:12.5px;">
+                            Click <strong style="color:var(--text-secondary)">Load Log</strong> to view the Laravel error log
+                        </div>
+                    @endif
                 </div>
             </div>
 

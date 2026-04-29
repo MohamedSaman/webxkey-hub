@@ -18,6 +18,11 @@ class SiteDetail extends Component
     public bool $debugMode = false;
     public array $serverStats = [];
 
+    // Log viewer
+    public string $logOutput = '';
+    public int $logLines = 100;
+    public bool $logLoaded = false;
+
     public function mount(Application $application): void
     {
         $this->application = $application;
@@ -153,6 +158,25 @@ class SiteDetail extends Component
     public function refreshStats(): void
     {
         $this->serverStats = $this->cmd()->getServerStats();
+    }
+
+    public function loadLog(): void
+    {
+        $this->logOutput = $this->cmd()->readLog($this->application->folder_path, $this->logLines);
+        $this->logLoaded = true;
+    }
+
+    public function clearLog(): void
+    {
+        $this->cmd()->clearLog($this->application->folder_path);
+        $this->logOutput = '(log cleared)';
+    }
+
+    public function updatedLogLines(): void
+    {
+        if ($this->logLoaded) {
+            $this->loadLog();
+        }
     }
 
     public function render()
