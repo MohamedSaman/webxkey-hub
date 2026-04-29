@@ -90,6 +90,17 @@
                     <div class="info-row"><span class="info-key">Folder</span><span class="mono" style="font-size:11px;">/var/www/{{ $application->folder_path }}</span></div>
                     <div class="info-row"><span class="info-key">Branch</span><span>{{ $application->branch }}</span></div>
                     <div class="info-row"><span class="info-key">Database</span><span>{{ $application->db_name ?? '—' }}</span></div>
+                    <div class="info-row">
+                        <span class="info-key">APP_DEBUG</span>
+                        <button wire:click="toggleDebug" style="display:flex;align-items:center;gap:6px;background:none;border:none;padding:0;cursor:pointer;">
+                            <span style="display:inline-flex;align-items:center;width:36px;height:20px;border-radius:10px;padding:2px;transition:background .2s;background:{{ $debugMode ? '#A32D2D' : '#ccc' }};">
+                                <span style="display:block;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;transform:translateX({{ $debugMode ? '16px' : '0' }});"></span>
+                            </span>
+                            <span style="font-size:12px;font-weight:500;color:{{ $debugMode ? '#A32D2D' : 'var(--color-text-tertiary)' }};">
+                                {{ $debugMode ? 'true' : 'false' }}
+                            </span>
+                        </button>
+                    </div>
                     <div class="info-row"><span class="info-key">PHP version</span><span>{{ $application->php_version }}</span></div>
                     <div class="info-row">
                         <span class="info-key">SSL expires</span>

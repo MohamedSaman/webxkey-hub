@@ -98,6 +98,18 @@ class SiteDetail extends Component
         );
     }
 
+    public function toggleDebug(): void
+    {
+        $this->debugMode = !$this->debugMode;
+        $this->cmd()->setEnvValue(
+            $this->application->folder_path,
+            'APP_DEBUG',
+            $this->debugMode ? 'true' : 'false'
+        );
+        $this->cmd()->optimizeClear($this->application->folder_path);
+        $this->actionOutput = '✓ APP_DEBUG set to ' . ($this->debugMode ? 'true' : 'false') . ' — cache cleared.';
+    }
+
     public function toggleMaintenance(): void
     {
         if ($this->inMaintenance) {
