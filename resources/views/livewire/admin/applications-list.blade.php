@@ -3,11 +3,77 @@
         <div class="page-title">Client Systems</div>
         <div style="display:flex;gap:8px;align-items:center">
             <input wire:model.live="search" type="text" placeholder="Search sites..." class="form-input" style="width:200px;padding:6px 10px;font-size:12px;">
+            <button wire:click="scanAndSyncAll" class="btn" wire:loading.attr="disabled">
+                <span wire:loading.remove wire:target="scanAndSyncAll">⟳ Scan All from Server</span>
+                <span wire:loading wire:target="scanAndSyncAll"><span class="spinner"></span> Scanning...</span>
+            </button>
+            <button wire:click="openImport" class="btn">+ Register Existing</button>
             <a href="{{ route('deploy') }}" class="btn btn-primary">+ Deploy New App</a>
         </div>
     </div>
 
     <div class="content-area">
+
+        {{-- Import Existing App Panel --}}
+        @if($showImport)
+        <div style="background:var(--color-bg-primary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div style="font-size:13px;font-weight:500;">Register Existing App</div>
+                <button wire:click="closeImport" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--color-text-tertiary);">×</button>
+            </div>
+
+            @if(!$importFolder)
+                {{-- Step 1: pick folder --}}
+                <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;">Select a folder from <code>/var/www</code> to register:</div>
+                @if(empty($unregistered))
+                    <div style="font-size:12px;color:var(--color-text-tertiary);">All folders are already registered.</div>
+                @else
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        @foreach($unregistered as $f)
+                            <button wire:click="selectImportFolder('{{ $f }}')" class="btn" style="font-family:var(--font-mono);font-size:12px;">
+                                /{{ $f }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+            @else
+                {{-- Step 2: confirm / edit details --}}
+                <div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:12px;">
+                    Reading from <code>/var/www/{{ $importFolder }}/.env</code> — edit any field then click Register.
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                    <div class="form-group">
+                        <label class="form-label">Folder</label>
+                        <input class="form-input" type="text" value="{{ $importFolder }}" disabled style="opacity:0.6;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">App Name</label>
+                        <input wire:model="importName" class="form-input" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Domain</label>
+                        <input wire:model="importDomain" class="form-input" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Database</label>
+                        <input wire:model="importDbName" class="form-input" type="text">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Git Repo</label>
+                        <input wire:model="importGitRepo" class="form-input" type="text" placeholder="https://github.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Branch</label>
+                        <input wire:model="importBranch" class="form-input" type="text">
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button wire:click="importApp" class="btn btn-primary">Register App</button>
+                    <button wire:click="$set('importFolder', '')" class="btn">← Back</button>
+                </div>
+            @endif
+        </div>
+        @endif
 
         @if($confirmDeleteId)
             <div style="background:#FCEBEB;border:0.5px solid #A32D2D;border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">

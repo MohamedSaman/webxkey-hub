@@ -77,6 +77,14 @@ class ServerCommandService
         return implode("\n", $output);
     }
 
+    public function runQuickPublic(string $path, string $cmd): string
+    {
+        $safePath = escapeshellarg($path);
+        $output = [];
+        exec("cd {$safePath} && {$cmd}", $output);
+        return implode("\n", $output);
+    }
+
     public function cloneRepo(string $repo, string $folder, string $branch, DeploymentLog $log): bool
     {
         $safeRepo   = escapeshellarg($repo);
@@ -186,6 +194,31 @@ class ServerCommandService
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
         return $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --show 2>&1");
+    }
+
+    public function getUnregisteredFolders(array $registeredFolders): array
+    {
+        $skip = ['.', '..', 'html', 'webxkey-hub'];
+        $all  = scandir($this->wwwPath) ?: [];
+        return array_values(array_filter($all, function ($f) use ($skip, $registeredFolders) {
+            return !in_array($f, $skip)
+                && is_dir("{$this->wwwPath}/{$f}")
+                && !in_array($f, $registeredFolders);
+        }));
+    }
+
+    public function readEnvFile(string $folder): array
+    {
+        $envPath = "{$this->wwwPath}/{$folder}/.env";
+        if (!file_exists($envPath)) return [];
+        $data = [];
+        foreach (file($envPath) as $line) {
+            $line = trim($line);
+            if (!$line || str_starts_with($line, '#') || !str_contains($line, '=')) continue;
+            [$key, $val] = explode('=', $line, 2);
+            $data[trim($key)] = trim($val, " \t\n\r\"'");
+        }
+        return $data;
     }
 
     public function getEnvValue(string $folder, string $key): string
