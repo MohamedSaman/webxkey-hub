@@ -204,25 +204,27 @@ class ServerCommandService
         return $this->runQuick("{$this->sudo()} systemctl reload nginx");
     }
 
+    private string $cleanEnv = 'env -i HOME=/tmp PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
+
     public function runMigrate(string $folder, DeploymentLog $log, bool $seed = false): bool
     {
         $path     = escapeshellarg("{$this->wwwPath}/{$folder}");
         $seedFlag = $seed ? ' --seed' : '';
-        $cmd = "cd {$path} && php artisan migrate --force{$seedFlag} 2>&1";
+        $cmd = "cd {$path} && {$this->cleanEnv} php artisan migrate --force{$seedFlag} 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
     public function runMigrateFresh(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $cmd  = "cd {$path} && php artisan migrate:fresh --force 2>&1";
+        $cmd  = "cd {$path} && {$this->cleanEnv} php artisan migrate:fresh --force 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
     public function runSeeders(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $cmd = "cd {$path} && php artisan db:seed --force 2>&1";
+        $cmd = "cd {$path} && {$this->cleanEnv} php artisan db:seed --force 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
