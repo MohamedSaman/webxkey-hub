@@ -121,27 +121,57 @@ class ServerCommandService
         $envPath     = "{$this->wwwPath}/{$folder}/.env";
         $examplePath = "{$this->wwwPath}/{$folder}/.env.example";
 
-        // Always start fresh from .env.example
-        if (file_exists($examplePath)) {
-            copy($examplePath, $envPath);
-        }
+        // Start from .env.example if available, otherwise build from scratch
+        $content = file_exists($examplePath) ? file_get_contents($examplePath) : '';
 
-        $content = file_exists($envPath) ? file_get_contents($envPath) : '';
-
-        $replacements = [
-            'APP_NAME'    => '"' . ($config['app_name'] ?? 'Laravel') . '"',
-            'APP_URL'     => $config['app_url'] ?? 'http://localhost',
-            'APP_ENV'     => $config['app_env'] ?? 'production',
-            'APP_DEBUG'   => 'false',
-            'DB_CONNECTION' => 'mysql',
-            'DB_HOST'     => '127.0.0.1',
-            'DB_PORT'     => '3306',
-            'DB_DATABASE' => $config['db_name'] ?? '',
-            'DB_USERNAME' => $config['db_user'] ?? 'webxkey',
-            'DB_PASSWORD' => $config['db_password'] ?? '',
+        // Full set of defaults — merged with any values already in .env.example
+        $defaults = [
+            'APP_NAME'                => '"' . ($config['app_name'] ?? 'Laravel') . '"',
+            'APP_ENV'                 => 'production',
+            'APP_KEY'                 => '',
+            'APP_DEBUG'               => 'false',
+            'APP_URL'                 => $config['app_url'] ?? 'http://localhost',
+            'APP_LOCALE'              => 'en',
+            'APP_FALLBACK_LOCALE'     => 'en',
+            'APP_FAKER_LOCALE'        => 'en_US',
+            'APP_MAINTENANCE_DRIVER'  => 'file',
+            'BCRYPT_ROUNDS'           => '12',
+            'LOG_CHANNEL'             => 'stack',
+            'LOG_STACK'               => 'single',
+            'LOG_DEPRECATIONS_CHANNEL'=> 'null',
+            'LOG_LEVEL'               => 'debug',
+            'DB_CONNECTION'           => 'mysql',
+            'DB_HOST'                 => '127.0.0.1',
+            'DB_PORT'                 => '3306',
+            'DB_DATABASE'             => $config['db_name'] ?? '',
+            'DB_USERNAME'             => $config['db_user'] ?? 'webxkey',
+            'DB_PASSWORD'             => $config['db_password'] ?? '',
+            'SESSION_DRIVER'          => 'database',
+            'SESSION_LIFETIME'        => '120',
+            'SESSION_ENCRYPT'         => 'false',
+            'SESSION_PATH'            => '/',
+            'SESSION_DOMAIN'          => 'null',
+            'BROADCAST_CONNECTION'    => 'log',
+            'FILESYSTEM_DISK'         => 'local',
+            'QUEUE_CONNECTION'        => 'database',
+            'CACHE_STORE'             => 'database',
+            'MEMCACHED_HOST'          => '127.0.0.1',
+            'REDIS_CLIENT'            => 'phpredis',
+            'REDIS_HOST'              => '127.0.0.1',
+            'REDIS_PASSWORD'          => 'null',
+            'REDIS_PORT'              => '6379',
+            'MAIL_MAILER'             => 'log',
+            'MAIL_SCHEME'             => 'null',
+            'MAIL_HOST'               => '127.0.0.1',
+            'MAIL_PORT'               => '2525',
+            'MAIL_USERNAME'           => 'null',
+            'MAIL_PASSWORD'           => 'null',
+            'MAIL_FROM_ADDRESS'       => '"hello@' . ($config['app_url'] ? parse_url($config['app_url'], PHP_URL_HOST) : 'example.com') . '"',
+            'MAIL_FROM_NAME'          => '"${APP_NAME}"',
+            'VITE_APP_NAME'           => '"${APP_NAME}"',
         ];
 
-        foreach ($replacements as $key => $value) {
+        foreach ($defaults as $key => $value) {
             if (preg_match("/^{$key}=/m", $content)) {
                 $content = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $content);
             } else {
@@ -152,11 +182,23 @@ class ServerCommandService
         return file_put_contents($envPath, $content) !== false;
     }
 
-    public function generateAppKey(string $folder): bool
+    public function generateAppKey(string $folder): string
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $output = $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --force 2>&1");
-        return str_contains($output, 'successfully') || str_contains($output, 'Application key set');
+        return $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --show 2>&1");
+    }
+
+    public function writeAppKey(string $folder, string $key): bool
+    {
+        $envPath = "{$this->wwwPath}/{$folder}/.env";
+        $content = file_exists($envPath) ? file_get_contents($envPath) : '';
+        $safeKey = escapeshellarg($key);
+        if (preg_match('/^APP_KEY=/m', $content)) {
+            $content = preg_replace('/^APP_KEY=.*/m', "APP_KEY={$key}", $content);
+        } else {
+            $content .= "\nAPP_KEY={$key}";
+        }
+        return file_put_contents($envPath, $content) !== false;
     }
 
     public function createDatabase(string $dbName, DeploymentLog $log, string $dbUser = 'webxkey', string $dbPassword = ''): bool

@@ -32,6 +32,7 @@ class DeployWizard extends Component
     public string $dbName = '';
     public string $dbUser = 'webxkey';
     public string $dbPassword = '';
+    public string $generatedKey = '';
 
     // Step 6 – Nginx
     public string $domainName = '';
@@ -150,6 +151,15 @@ class DeployWizard extends Component
     }
 
     // ── Step 4: Env Setup ────────────────────────────────────────────────
+    public function generateKey(): void
+    {
+        $key = $this->cmd->generateAppKey($this->folderName);
+        $this->generatedKey = trim($key);
+        if ($this->generatedKey) {
+            $this->cmd->writeAppKey($this->folderName, $this->generatedKey);
+        }
+    }
+
     public function runEnvSetup(): void
     {
         $this->validate([
@@ -169,7 +179,12 @@ class DeployWizard extends Component
         ]);
 
         if ($success) {
-            $this->cmd->generateAppKey($this->folderName);
+            // Generate and write key if not already generated
+            if (!$this->generatedKey) {
+                $this->generateKey();
+            } else {
+                $this->cmd->writeAppKey($this->folderName, $this->generatedKey);
+            }
             Application::where('id', $this->applicationId)->update(['name' => $this->appName]);
         }
 

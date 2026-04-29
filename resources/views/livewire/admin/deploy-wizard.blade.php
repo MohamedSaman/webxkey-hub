@@ -99,20 +99,36 @@
 
                     {{-- Auto-built (read-only) --}}
                     <div style="font-size:11px;font-weight:600;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Auto-configured</div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
                         @foreach([
                             'APP_ENV'        => 'production',
                             'APP_DEBUG'      => 'false',
-                            'APP_KEY'        => '(auto-generated)',
                             'DB_CONNECTION'  => 'mysql',
                             'DB_HOST'        => '127.0.0.1',
                             'DB_PORT'        => '3306',
+                            'SESSION_DRIVER' => 'database',
+                            'CACHE_STORE'    => 'database',
+                            'QUEUE_CONNECTION'=> 'database',
                         ] as $k => $v)
                         <div style="background:var(--color-bg-secondary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-md);padding:7px 10px;">
                             <div style="font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:2px;">{{ $k }}</div>
                             <div style="font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);">{{ $v }}</div>
                         </div>
                         @endforeach
+                    </div>
+
+                    {{-- APP_KEY --}}
+                    <div style="background:var(--color-bg-secondary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:3px;">APP_KEY</div>
+                            <div style="font-size:11px;font-family:var(--font-mono);color:{{ $generatedKey ? '#3B6D11' : 'var(--color-text-tertiary)' }};word-break:break-all;">
+                                {{ $generatedKey ?: '(not generated yet)' }}
+                            </div>
+                        </div>
+                        <button wire:click="generateKey" class="btn btn-sm" style="flex-shrink:0;" wire:loading.attr="disabled">
+                            <span wire:loading.remove wire:target="generateKey">{{ $generatedKey ? 'Re-generate' : 'Generate Key' }}</span>
+                            <span wire:loading wire:target="generateKey"><span class="spinner"></span></span>
+                        </button>
                     </div>
 
                     {{-- Editable fields --}}
