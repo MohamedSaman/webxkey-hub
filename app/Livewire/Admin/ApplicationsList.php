@@ -127,22 +127,28 @@ class ApplicationsList extends Component
         $cmd = new ServerCommandService();
         $existing = Application::all()->keyBy('folder_path');
 
-        // 1. Update existing records that have NULL data
+        // 1. Update existing records — only fill NULL/empty fields, never overwrite existing data
         foreach ($existing as $folder => $app) {
-            if ($app->git_repo && $app->db_name) continue; // already has data
             $env = $cmd->readEnvFile($folder);
-            if (empty($env)) continue;
 
-            $domain = $env['APP_URL'] ? (parse_url($env['APP_URL'], PHP_URL_HOST) ?? $app->domain) : $app->domain;
-            $gitRepo = trim($cmd->runQuickPublic("/var/www/{$folder}", 'git remote get-url origin 2>/dev/null'));
+            $updates = [];
 
-            $app->update(array_filter([
-                'name'        => $env['APP_NAME'] ?? $app->name,
-                'domain'      => $domain ?: $app->domain,
-                'db_name'     => $env['DB_DATABASE'] ?? $app->db_name,
-                'git_repo'    => $gitRepo ?: $app->git_repo,
-                'status'      => $app->status === 'deploying' ? 'live' : $app->status,
-            ], fn($v) => $v !== null && $v !== ''));
+            if (empty($app->db_name) && !empty($env['DB_DATABASE'])) {
+                $updates['db_name'] = $env['DB_DATABASE'];
+            }
+
+            if (empty($app->git_repo)) {
+                $gitRepo = trim($cmd->runQuickPublic("/var/www/{$folder}", 'git remote get-url origin 2>/dev/null'));
+                if ($gitRepo) $updates['git_repo'] = $gitRepo;
+            }
+
+            if ($app->status === 'deploying') {
+                $updates['status'] = 'live';
+            }
+
+            if (!empty($updates)) {
+                $app->update($updates);
+            }
         }
 
         // 2. Register any unregistered folders
