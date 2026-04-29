@@ -95,31 +95,48 @@
 
                 {{-- ── STEP 3: Env Setup ── --}}
                 @if($step === 3)
-                    <div style="font-size:13px;font-weight:500;margin-bottom:16px">Step 4 — Environment configuration</div>
+                    <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 4 — Environment configuration</div>
+
+                    {{-- Auto-built (read-only) --}}
+                    <div style="font-size:11px;font-weight:600;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Auto-configured</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+                        @foreach([
+                            'APP_ENV'        => 'production',
+                            'APP_DEBUG'      => 'false',
+                            'APP_KEY'        => '(auto-generated)',
+                            'DB_CONNECTION'  => 'mysql',
+                            'DB_HOST'        => '127.0.0.1',
+                            'DB_PORT'        => '3306',
+                        ] as $k => $v)
+                        <div style="background:var(--color-bg-secondary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-md);padding:7px 10px;">
+                            <div style="font-size:10px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-bottom:2px;">{{ $k }}</div>
+                            <div style="font-size:12px;font-family:var(--font-mono);color:var(--color-text-secondary);">{{ $v }}</div>
+                        </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Editable fields --}}
+                    <div style="font-size:11px;font-weight:600;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Edit these</div>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                         <div class="form-group">
-                            <label class="form-label">App Name</label>
+                            <label class="form-label">APP_NAME</label>
                             <input wire:model="appName" class="form-input" type="text" placeholder="Clinic System">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">App URL</label>
+                            <label class="form-label">APP_URL</label>
                             <input wire:model="appUrl" class="form-input" type="url" placeholder="https://clinic.webxkey.store">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">DB Database</label>
+                            <label class="form-label">DB_DATABASE</label>
                             <input wire:model="dbName" class="form-input" type="text" placeholder="clinic_db">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">DB Username</label>
+                            <label class="form-label">DB_USERNAME</label>
                             <input wire:model="dbUser" class="form-input" type="text">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">DB Password</label>
+                        <div class="form-group" style="grid-column:1/-1">
+                            <label class="form-label">DB_PASSWORD</label>
                             <input wire:model="dbPassword" class="form-input" type="password" placeholder="leave blank if none">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">App Environment</label>
-                            <input wire:model="appEnv" class="form-input" type="text">
                         </div>
                     </div>
                     <button wire:click="runEnvSetup" class="btn btn-primary" wire:loading.attr="disabled">

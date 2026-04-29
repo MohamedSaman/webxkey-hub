@@ -100,6 +100,14 @@ class DeployWizard extends Component
         $this->stepRunning = false;
         $this->stepDone = $success;
         $this->stepFailed = !$success;
+
+        // Pre-fill env fields from step 1 data
+        if ($success) {
+            if (!$this->appName)   $this->appName   = ucwords(str_replace(['-', '_'], ' ', $this->folderName));
+            if (!$this->domainName) $this->domainName = $this->folderName . '.webxkey.store';
+            if (!$this->appUrl)    $this->appUrl    = 'https://' . $this->domainName;
+            if (!$this->dbName)    $this->dbName    = str_replace('-', '_', $this->folderName) . '_db';
+        }
     }
 
     // ── Step 2: Permissions ─────────────────────────────────────────────
@@ -161,7 +169,7 @@ class DeployWizard extends Component
         ]);
 
         if ($success) {
-            $key = $this->cmd->generateAppKey($this->folderName);
+            $this->cmd->generateAppKey($this->folderName);
             Application::where('id', $this->applicationId)->update(['name' => $this->appName]);
         }
 

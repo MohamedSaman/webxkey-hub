@@ -121,19 +121,23 @@ class ServerCommandService
         $envPath     = "{$this->wwwPath}/{$folder}/.env";
         $examplePath = "{$this->wwwPath}/{$folder}/.env.example";
 
-        if (!file_exists($envPath) && file_exists($examplePath)) {
+        // Always start fresh from .env.example
+        if (file_exists($examplePath)) {
             copy($examplePath, $envPath);
         }
 
         $content = file_exists($envPath) ? file_get_contents($envPath) : '';
 
         $replacements = [
-            'APP_NAME'    => $config['app_name'] ?? 'Laravel',
+            'APP_NAME'    => '"' . ($config['app_name'] ?? 'Laravel') . '"',
             'APP_URL'     => $config['app_url'] ?? 'http://localhost',
             'APP_ENV'     => $config['app_env'] ?? 'production',
             'APP_DEBUG'   => 'false',
+            'DB_CONNECTION' => 'mysql',
+            'DB_HOST'     => '127.0.0.1',
+            'DB_PORT'     => '3306',
             'DB_DATABASE' => $config['db_name'] ?? '',
-            'DB_USERNAME' => $config['db_user'] ?? 'root',
+            'DB_USERNAME' => $config['db_user'] ?? 'webxkey',
             'DB_PASSWORD' => $config['db_password'] ?? '',
         ];
 
@@ -148,10 +152,11 @@ class ServerCommandService
         return file_put_contents($envPath, $content) !== false;
     }
 
-    public function generateAppKey(string $folder): string
+    public function generateAppKey(string $folder): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        return $this->runQuick("cd {$path} && php artisan key:generate --show");
+        $output = $this->runQuick("cd {$path} && {$this->cleanEnv} php artisan key:generate --force 2>&1");
+        return str_contains($output, 'successfully') || str_contains($output, 'Application key set');
     }
 
     public function createDatabase(string $dbName, DeploymentLog $log, string $dbUser = 'webxkey', string $dbPassword = ''): bool
