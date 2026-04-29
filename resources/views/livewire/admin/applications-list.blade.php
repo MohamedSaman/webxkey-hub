@@ -9,7 +9,7 @@
 
     <div class="content-area">
 
-        @if($confirmDelete)
+        @if($confirmDeleteId)
             <div style="background:#FCEBEB;border:0.5px solid #A32D2D;border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
                 <span style="font-size:13px;color:#A32D2D;">Delete this application? The folder <strong>/var/www/{{ $deleteFolder }}</strong> will be permanently removed from the server.</span>
                 <div style="display:flex;gap:8px;">

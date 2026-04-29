@@ -11,7 +11,7 @@ use Livewire\Attributes\Layout;
 class ApplicationsList extends Component
 {
     public string $search = '';
-    public ?int $confirmDelete = null;
+    public ?int $confirmDeleteId = null;
     public string $deleteFolder = '';
 
     public function updatedSearch(): void
@@ -36,23 +36,24 @@ class ApplicationsList extends Component
 
     public function confirmDelete(int $appId): void
     {
-        $this->confirmDelete = $appId;
+        $this->confirmDeleteId = $appId;
         $this->deleteFolder = Application::find($appId)?->folder_path ?? '';
     }
 
     public function deleteApp(): void
     {
-        if ($this->confirmDelete) {
-            $app = Application::findOrFail($this->confirmDelete);
+        if ($this->confirmDeleteId) {
+            $app = Application::findOrFail($this->confirmDeleteId);
             (new ServerCommandService())->deleteFolder($app->folder_path);
             $app->delete();
-            $this->confirmDelete = null;
+            $this->confirmDeleteId = null;
+            $this->deleteFolder = '';
         }
     }
 
     public function cancelDelete(): void
     {
-        $this->confirmDelete = null;
+        $this->confirmDeleteId = null;
         $this->deleteFolder = '';
     }
 
