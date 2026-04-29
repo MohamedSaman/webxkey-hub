@@ -1,0 +1,703 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{display:flex;height:640px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-tertiary)}
+.sidebar{width:200px;flex-shrink:0;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;padding:16px 0}
+.sidebar-logo{padding:0 16px 20px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:8px}
+.logo-mark{font-size:13px;font-weight:500;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.nav-section{font-size:10px;font-weight:500;color:var(--color-text-tertiary);padding:12px 16px 4px;letter-spacing:0.5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:13px;cursor:pointer;color:var(--color-text-secondary);border-radius:0;transition:background 0.1s}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.nav-icon{width:14px;height:14px;opacity:0.6;flex-shrink:0}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.page-title{font-size:15px;font-weight:500}
+.btn{padding:6px 14px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-primary);transition:background 0.1s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-primary{background:#185FA5;color:#E6F1FB;border-color:#185FA5}
+.btn-primary:hover{background:#0C447C}
+.btn-success{background:#3B6D11;color:#EAF3DE;border-color:#3B6D11}
+.btn-danger{background:#A32D2D;color:#FCEBEB;border-color:#A32D2D}
+.content{padding:20px;flex:1}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
+.stat-value{font-size:22px;font-weight:500}
+.stat-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:3px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:13px;font-weight:500;color:var(--color-text-secondary)}
+.sites-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.site-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:border-color 0.15s}
+.site-card:hover{border-color:var(--color-border-secondary)}
+.site-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.site-name{font-size:13px;font-weight:500}
+.site-domain{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-green{background:#639922}
+.dot-yellow{background:#BA7517}
+.dot-red{background:#E24B4A}
+.site-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:10px 0}
+.meta-item{font-size:11px;color:var(--color-text-tertiary)}
+.meta-val{font-size:11px;color:var(--color-text-primary);font-weight:500}
+.site-actions{display:flex;gap:6px;margin-top:10px;border-top:0.5px solid var(--color-border-tertiary);padding-top:10px}
+.act-btn{flex:1;font-size:11px;padding:5px 0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);cursor:pointer;color:var(--color-text-secondary);transition:background 0.1s}
+.act-btn:hover{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500}
+.badge-green{background:#EAF3DE;color:#3B6D11}
+.badge-yellow{background:#FAEEDA;color:#854F0B}
+.badge-red{background:#FCEBEB;color:#A32D2D}
+.badge-blue{background:#E6F1FB;color:#185FA5}
+.view{display:none}
+.view.active{display:block}
+.wizard-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.wizard-steps{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.wstep{flex:1;padding:10px 4px;text-align:center;font-size:10px;color:var(--color-text-tertiary);border-right:0.5px solid var(--color-border-tertiary);position:relative}
+.wstep:last-child{border-right:none}
+.wstep.done{color:#3B6D11;font-weight:500}
+.wstep.active{color:#185FA5;font-weight:500;background:var(--color-background-primary)}
+.wstep-num{display:block;font-size:16px;font-weight:500;margin-bottom:2px}
+.wizard-body{padding:24px}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px}
+.form-input{width:100%;padding:8px 12px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.form-input:focus{outline:none;border-color:#378ADD}
+.terminal{background:#2C2C2A;border-radius:var(--border-radius-md);padding:14px;font-family:var(--font-mono);font-size:12px;color:#C0DD97;min-height:100px;line-height:1.8;margin:12px 0}
+.terminal .line-err{color:#F09595}
+.terminal .line-info{color:#85B7EB}
+.step-content{display:none}
+.step-content.active{display:block}
+.wizard-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.progress-bar-wrap{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-bottom:16px}
+.progress-bar{height:3px;background:#185FA5;border-radius:2px;transition:width 0.4s}
+.detail-view{display:grid;grid-template-columns:1fr 340px;gap:16px}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.panel-title{font-size:13px;font-weight:500;margin-bottom:14px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.action-tile{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;cursor:pointer;transition:border-color 0.15s;text-align:left}
+.action-tile:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.action-tile-icon{font-size:18px;margin-bottom:6px}
+.action-tile-label{font-size:12px;font-weight:500}
+.action-tile-desc{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.info-row:last-child{border-bottom:none}
+.info-key{color:var(--color-text-tertiary)}
+.health-bar{display:flex;gap:2px;margin-top:8px}
+.hb-seg{height:24px;flex:1;border-radius:2px;background:#639922}
+.hb-seg.err{background:#E24B4A}
+.hb-seg.warn{background:#BA7517}
+.deploy-log{background:#2C2C2A;border-radius:var(--border-radius-md);padding:12px;font-family:var(--font-mono);font-size:11px;color:#C0DD97;height:160px;overflow-y:auto;line-height:1.7}
+.server-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.sstat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.sstat-label{font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px}
+.sstat-value{font-size:18px;font-weight:500}
+.progress-mini{height:4px;background:var(--color-border-tertiary);border-radius:2px;margin-top:4px;overflow:hidden}
+.progress-fill{height:4px;background:#378ADD;border-radius:2px}
+.progress-fill.warn{background:#BA7517}
+.tag{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;background:var(--color-background-info);color:var(--color-text-info)}
+</style>
+
+<h2 class="sr-only">WebXKey Server Manager — interactive dashboard mockup showing site management, deploy wizard, and site detail views</h2>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">⬡ WebXKey</div>
+      <div class="logo-sub">Server Manager</div>
+    </div>
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showView('dashboard',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section">Sites</div>
+    <div class="nav-item" onclick="showView('sites-list',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h8v2H2z"/></svg>
+      Client Systems
+    </div>
+    <div class="nav-item" onclick="showView('deploy',this)">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l7 4v6l-7 4L1 11V5z"/></svg>
+      Deploy New App
+    </div>
+    <div class="nav-section">Server</div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="4" width="14" height="3" rx="1"/><rect x="1" y="9" width="14" height="3" rx="1"/><circle cx="12" cy="5.5" r="0.8"/><circle cx="12" cy="10.5" r="0.8"/></svg>
+      Nginx Config
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="7"/><path d="M8 4v4l3 2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      Deployments
+    </div>
+    <div style="margin-top:auto;padding:16px">
+      <div style="font-size:11px;color:var(--color-text-tertiary)">57.159.27.225</div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:2px">PHP 8.3 · Ubuntu 24</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard" class="view active">
+      <div class="topbar">
+        <div class="page-title">Dashboard</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--color-text-tertiary)">Last check: 2 min ago</span>
+          <button class="btn btn-primary" onclick="showView('deploy',document.querySelector('.nav-item:nth-child(6)'))">+ Deploy New App</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Live Sites</div>
+            <div class="stat-value" style="color:#3B6D11">18</div>
+            <div class="stat-sub">All responding 200</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Warnings</div>
+            <div class="stat-value" style="color:#BA7517">2</div>
+            <div class="stat-sub">SSL expiring soon</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Server Load</div>
+            <div class="stat-value">34%</div>
+            <div class="stat-sub">CPU · 2.1/4 GB RAM</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Disk Used</div>
+            <div class="stat-value">18 GB</div>
+            <div class="stat-sub">of 80 GB · 22%</div>
+          </div>
+        </div>
+        <div class="section-header">
+          <span class="section-title">Active Sites</span>
+          <div style="display:flex;gap:6px">
+            <span class="badge badge-green">18 live</span>
+            <span class="badge badge-yellow">2 warnings</span>
+          </div>
+        </div>
+        <div class="sites-grid">
+          <div class="site-card" onclick="showView('site-detail',null)">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">USN Portal</div>
+                <div class="site-domain">usn.webxkey.store</div>
+              </div>
+              <div class="status-dot dot-green"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 42ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val">42 days</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">2h ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">main</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn" onclick="event.stopPropagation();termFlash(this,'git pull')">Pull</button>
+              <button class="act-btn" onclick="event.stopPropagation();termFlash(this,'cache:clear')">Cache</button>
+              <button class="act-btn" onclick="event.stopPropagation();showView('site-detail',null)">Details</button>
+            </div>
+          </div>
+          <div class="site-card">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">CurtainPlus</div>
+                <div class="site-domain">plus.webxkey.store</div>
+              </div>
+              <div class="status-dot dot-yellow"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 891ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val" style="color:#BA7517">12 days ⚠</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">1d ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">main</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn">Pull</button>
+              <button class="act-btn">Cache</button>
+              <button class="act-btn">Details</button>
+            </div>
+          </div>
+          <div class="site-card">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">HardMen</div>
+                <div class="site-domain">hardmen.webxkey.store</div>
+              </div>
+              <div class="status-dot dot-green"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 58ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val">67 days</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">3d ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">develop</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn">Pull</button>
+              <button class="act-btn">Cache</button>
+              <button class="act-btn">Details</button>
+            </div>
+          </div>
+          <div class="site-card">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">Phoenix</div>
+                <div class="site-domain">phoenix.webxkey.store</div>
+              </div>
+              <div class="status-dot dot-green"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 33ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val">89 days</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">5h ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">main</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn">Pull</button>
+              <button class="act-btn">Cache</button>
+              <button class="act-btn">Details</button>
+            </div>
+          </div>
+          <div class="site-card">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">Safari Motors</div>
+                <div class="site-domain">safari-motors.webxkey.store</div>
+              </div>
+              <div class="status-dot dot-green"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 71ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val">55 days</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">2d ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">main</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn">Pull</button>
+              <button class="act-btn">Cache</button>
+              <button class="act-btn">Details</button>
+            </div>
+          </div>
+          <div class="site-card">
+            <div class="site-card-header">
+              <div>
+                <div class="site-name">WebXKey.com</div>
+                <div class="site-domain">webxkey.com</div>
+              </div>
+              <div class="status-dot dot-green"></div>
+            </div>
+            <div class="site-meta">
+              <div><div class="meta-item">HTTP</div><div class="meta-val">200 · 28ms</div></div>
+              <div><div class="meta-item">SSL</div><div class="meta-val">104 days</div></div>
+              <div><div class="meta-item">Last pull</div><div class="meta-val">1h ago</div></div>
+              <div><div class="meta-item">Branch</div><div class="meta-val">main</div></div>
+            </div>
+            <div class="site-actions">
+              <button class="act-btn">Pull</button>
+              <button class="act-btn">Cache</button>
+              <button class="act-btn">Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPLOY WIZARD VIEW -->
+    <div id="view-deploy" class="view">
+      <div class="topbar">
+        <div class="page-title">Deploy New App</div>
+        <button class="btn" onclick="showView('dashboard',document.querySelector('.nav-item'))">← Back</button>
+      </div>
+      <div class="content">
+        <div class="wizard-wrap">
+          <div class="wizard-steps" id="wizard-steps">
+            <div class="wstep active" id="ws-0"><span class="wstep-num">1</span>Git Clone</div>
+            <div class="wstep" id="ws-1"><span class="wstep-num">2</span>Permissions</div>
+            <div class="wstep" id="ws-2"><span class="wstep-num">3</span>Packages</div>
+            <div class="wstep" id="ws-3"><span class="wstep-num">4</span>Env Setup</div>
+            <div class="wstep" id="ws-4"><span class="wstep-num">5</span>Database</div>
+            <div class="wstep" id="ws-5"><span class="wstep-num">6</span>Nginx</div>
+            <div class="wstep" id="ws-6"><span class="wstep-num">7</span>Migrate</div>
+            <div class="wstep" id="ws-7"><span class="wstep-num">8</span>Go Live</div>
+          </div>
+          <div class="progress-bar-wrap" style="margin:0"><div class="progress-bar" id="wiz-progress" style="width:12%"></div></div>
+          <div class="wizard-body">
+
+            <div class="step-content active" id="sc-0">
+              <div style="font-size:13px;font-weight:500;margin-bottom:16px">Step 1 — Clone repository</div>
+              <div class="form-group">
+                <label class="form-label">GitHub Repository URL</label>
+                <input class="form-input" type="text" placeholder="https://github.com/webxkey/clinic-system.git" id="git-url"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Folder Name <span style="color:var(--color-text-tertiary);font-weight:400">(will be /var/www/[name])</span></label>
+                <input class="form-input" type="text" placeholder="clinic-system" id="folder-name"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branch</label>
+                <input class="form-input" type="text" placeholder="main" value="main"/>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-1">
+              <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 2 — Setting file permissions</div>
+              <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">Running automatically. This prevents 500 errors on your site.</div>
+              <div class="terminal" id="term-step1">
+                <div class="line-info">$ sudo chown -R webxkey:www-data /var/www/clinic-system</div>
+                <div>✓ Owner set</div>
+                <div class="line-info">$ sudo chmod -R 775 /var/www/clinic-system/storage</div>
+                <div>✓ Storage writable</div>
+                <div class="line-info">$ sudo chmod -R 775 /var/www/clinic-system/bootstrap/cache</div>
+                <div>✓ Cache writable</div>
+                <div style="color:#639922;margin-top:6px">✓ Permissions OK — ready to continue</div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-2">
+              <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 3 — Installing packages</div>
+              <div class="terminal" id="term-packages">
+                <div class="line-info">$ composer update --no-interaction</div>
+                <div>Loading composer repositories with package information</div>
+                <div>Updating dependencies</div>
+                <div>- Downloading laravel/framework (v11.9.2)</div>
+                <div>- Installing livewire/livewire (3.5.1)</div>
+                <div style="color:#639922">✓ Composer: 42 packages installed</div>
+                <div style="margin-top:6px" class="line-info">$ npm install && npm run build</div>
+                <div>added 312 packages in 18s</div>
+                <div>vite v5.2.8 building for production...</div>
+                <div style="color:#639922">✓ NPM: assets compiled (1.2 MB)</div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-3">
+              <div style="font-size:13px;font-weight:500;margin-bottom:16px">Step 4 — Environment configuration</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="form-group">
+                  <label class="form-label">App Name</label>
+                  <input class="form-input" type="text" value="Clinic System"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">App URL</label>
+                  <input class="form-input" type="text" placeholder="https://clinic.webxkey.store"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">DB Database</label>
+                  <input class="form-input" type="text" placeholder="clinic_db" id="db-name"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">DB Username</label>
+                  <input class="form-input" type="text" value="root"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">DB Password</label>
+                  <input class="form-input" type="password" placeholder="••••••••"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">App Environment</label>
+                  <input class="form-input" type="text" value="production"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-4">
+              <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 5 — Create database</div>
+              <div class="form-group">
+                <label class="form-label">Database name to create</label>
+                <input class="form-input" type="text" value="clinic_db"/>
+              </div>
+              <div class="terminal">
+                <div class="line-info">$ mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS clinic_db;"</div>
+                <div style="color:#639922">✓ Database 'clinic_db' created successfully</div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-5">
+              <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 6 — Nginx configuration</div>
+              <div class="form-group">
+                <label class="form-label">Domain name</label>
+                <input class="form-input" type="text" placeholder="clinic.webxkey.store" id="nginx-domain"/>
+              </div>
+              <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:8px">Nginx config will be generated and saved to /etc/nginx/sites-available/</div>
+              <div class="terminal" style="min-height:80px;font-size:11px">
+                <div class="line-info">server {</div>
+                <div class="line-info">  listen 80;</div>
+                <div class="line-info">  server_name clinic.webxkey.store;</div>
+                <div class="line-info">  root /var/www/clinic-system/public;</div>
+                <div class="line-info">  ...</div>
+                <div class="line-info">}</div>
+                <div style="color:#639922;margin-top:6px">✓ nginx -t passed · nginx reloaded</div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-6">
+              <div style="font-size:13px;font-weight:500;margin-bottom:12px">Step 7 — Database migrations</div>
+              <div style="display:flex;gap:10px;margin-bottom:14px">
+                <button class="btn btn-primary" onclick="runMigrate()">Run Migrations</button>
+                <button class="btn" id="seed-btn" style="opacity:0.4" disabled>Run Seeders (optional)</button>
+              </div>
+              <div class="terminal" id="migrate-term" style="min-height:80px">
+                <div style="color:var(--color-text-tertiary)">Click "Run Migrations" to start...</div>
+              </div>
+            </div>
+
+            <div class="step-content" id="sc-7">
+              <div style="text-align:center;padding:20px 0">
+                <div style="font-size:32px;margin-bottom:12px">✓</div>
+                <div style="font-size:16px;font-weight:500;margin-bottom:8px;color:#3B6D11">Site is Live!</div>
+                <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px">clinic.webxkey.store is deployed and secured with SSL</div>
+                <div style="display:flex;gap:10px;justify-content:center">
+                  <button class="btn btn-primary">Open Site →</button>
+                  <button class="btn" onclick="showView('site-detail',null)">View Details</button>
+                  <button class="btn" onclick="resetWizard()">Deploy Another</button>
+                </div>
+                <div style="margin-top:16px;padding:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);text-align:left;font-size:11px">
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div><span style="color:var(--color-text-tertiary)">Domain: </span>clinic.webxkey.store</div>
+                    <div><span style="color:var(--color-text-tertiary)">Folder: </span>/var/www/clinic-system</div>
+                    <div><span style="color:var(--color-text-tertiary)">SSL: </span><span style="color:#3B6D11">Active · 90 days</span></div>
+                    <div><span style="color:var(--color-text-tertiary)">Status: </span><span style="color:#3B6D11">HTTP 200</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="wizard-footer">
+            <button class="btn" id="wiz-back" onclick="wizStep(-1)" style="opacity:0.4" disabled>← Back</button>
+            <span style="font-size:11px;color:var(--color-text-tertiary)" id="wiz-step-label">Step 1 of 8</span>
+            <button class="btn btn-primary" id="wiz-next" onclick="wizStep(1)">Continue →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITE DETAIL VIEW -->
+    <div id="view-site-detail" class="view">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn" onclick="showView('dashboard',document.querySelector('.nav-item'))">← Back</button>
+          <div class="page-title">USN Portal</div>
+          <span class="badge badge-green">Live</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn">Open Site ↗</button>
+          <button class="btn btn-danger" onclick="confirm('Stop usn.webxkey.store?')">Stop Site</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="detail-view">
+          <div>
+            <div class="panel" style="margin-bottom:12px">
+              <div class="panel-title">Quick Actions</div>
+              <div class="actions-grid">
+                <div class="action-tile" onclick="runAction(this,'git pull origin main')">
+                  <div class="action-tile-icon">↓</div>
+                  <div class="action-tile-label">Git Pull</div>
+                  <div class="action-tile-desc">Fetch latest code</div>
+                </div>
+                <div class="action-tile" onclick="runAction(this,'artisan optimize:clear')">
+                  <div class="action-tile-icon">⟳</div>
+                  <div class="action-tile-label">Clear Cache</div>
+                  <div class="action-tile-desc">optimize:clear</div>
+                </div>
+                <div class="action-tile" onclick="runAction(this,'artisan queue:restart')">
+                  <div class="action-tile-icon">↺</div>
+                  <div class="action-tile-label">Restart Queue</div>
+                  <div class="action-tile-desc">queue:restart</div>
+                </div>
+                <div class="action-tile" onclick="runAction(this,'artisan migrate --force')">
+                  <div class="action-tile-icon">⬆</div>
+                  <div class="action-tile-label">Run Migrate</div>
+                  <div class="action-tile-desc">migrate --force</div>
+                </div>
+                <div class="action-tile">
+                  <div class="action-tile-icon">⚙</div>
+                  <div class="action-tile-label">Maintenance</div>
+                  <div class="action-tile-desc">artisan down/up</div>
+                </div>
+                <div class="action-tile">
+                  <div class="action-tile-icon">⊞</div>
+                  <div class="action-tile-label">Git Status</div>
+                  <div class="action-tile-desc">Check changes</div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">Action Output</div>
+              <div class="deploy-log" id="action-log">
+                <span style="color:#888780">Click any action above to see live output...</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="panel" style="margin-bottom:12px">
+              <div class="panel-title">Site Info</div>
+              <div class="info-row"><span class="info-key">Domain</span><span>usn.webxkey.store</span></div>
+              <div class="info-row"><span class="info-key">Folder</span><span style="font-family:var(--font-mono);font-size:11px">/var/www/usn</span></div>
+              <div class="info-row"><span class="info-key">Branch</span><span>main</span></div>
+              <div class="info-row"><span class="info-key">Last commit</span><span style="font-family:var(--font-mono);font-size:11px">a3f9c12</span></div>
+              <div class="info-row"><span class="info-key">PHP version</span><span>8.3</span></div>
+              <div class="info-row"><span class="info-key">Laravel</span><span>v11.9.2</span></div>
+              <div class="info-row"><span class="info-key">Database</span><span>usn_db</span></div>
+              <div class="info-row"><span class="info-key">Disk usage</span><span>284 MB</span></div>
+              <div class="info-row"><span class="info-key">SSL expires</span><span style="color:#3B6D11">42 days</span></div>
+              <div class="info-row"><span class="info-key">Last deployed</span><span>3 Apr 2025</span></div>
+            </div>
+            <div class="panel" style="margin-bottom:12px">
+              <div class="panel-title">Uptime (last 30 checks)</div>
+              <div style="font-size:20px;font-weight:500;margin-bottom:8px;color:#3B6D11">99.8%</div>
+              <div class="health-bar">
+                <div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+                <div class="hb-seg"></div><div class="hb-seg err"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+                <div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg warn"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+                <div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+                <div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+                <div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div><div class="hb-seg"></div>
+              </div>
+              <div style="font-size:10px;color:var(--color-text-tertiary);margin-top:6px">Green=200 · Yellow=slow · Red=error</div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">Server Stats</div>
+              <div class="server-stats">
+                <div class="sstat"><div class="sstat-label">CPU</div><div class="sstat-value">34%</div><div class="progress-mini"><div class="progress-fill" style="width:34%"></div></div></div>
+                <div class="sstat"><div class="sstat-label">RAM</div><div class="sstat-value">52%</div><div class="progress-mini"><div class="progress-fill warn" style="width:52%"></div></div></div>
+                <div class="sstat"><div class="sstat-label">Disk</div><div class="sstat-value">22%</div><div class="progress-mini"><div class="progress-fill" style="width:22%"></div></div></div>
+                <div class="sstat"><div class="sstat-label">Nginx</div><div class="sstat-value" style="color:#3B6D11;font-size:13px">Active</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SITES LIST VIEW -->
+    <div id="view-sites-list" class="view">
+      <div class="topbar">
+        <div class="page-title">Client Systems</div>
+        <button class="btn btn-primary" onclick="showView('deploy',document.querySelector('.nav-item:nth-child(6)'))">+ Deploy New App</button>
+      </div>
+      <div class="content">
+        <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead><tr style="background:var(--color-background-secondary)">
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">Site</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">Domain</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">Status</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">SSL</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">Last Pull</th>
+              <th style="padding:10px 14px;text-align:left;font-weight:500;color:var(--color-text-secondary)">Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:10px 14px;font-weight:500">USN Portal</td><td style="padding:10px 14px;color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">usn.webxkey.store</td><td style="padding:10px 14px"><span class="badge badge-green">Live</span></td><td style="padding:10px 14px">42d</td><td style="padding:10px 14px;color:var(--color-text-tertiary)">2h ago</td><td style="padding:10px 14px"><div style="display:flex;gap:6px"><button class="act-btn" style="padding:4px 10px">Pull</button><button class="act-btn" style="padding:4px 10px" onclick="showView('site-detail',null)">Details</button></div></td></tr>
+              <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:10px 14px;font-weight:500">CurtainPlus</td><td style="padding:10px 14px;color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">plus.webxkey.store</td><td style="padding:10px 14px"><span class="badge badge-yellow">Slow</span></td><td style="padding:10px 14px;color:#BA7517;font-weight:500">12d ⚠</td><td style="padding:10px 14px;color:var(--color-text-tertiary)">1d ago</td><td style="padding:10px 14px"><div style="display:flex;gap:6px"><button class="act-btn" style="padding:4px 10px">Pull</button><button class="act-btn" style="padding:4px 10px">Details</button></div></td></tr>
+              <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:10px 14px;font-weight:500">HardMen</td><td style="padding:10px 14px;color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">hardmen.webxkey.store</td><td style="padding:10px 14px"><span class="badge badge-green">Live</span></td><td style="padding:10px 14px">67d</td><td style="padding:10px 14px;color:var(--color-text-tertiary)">3d ago</td><td style="padding:10px 14px"><div style="display:flex;gap:6px"><button class="act-btn" style="padding:4px 10px">Pull</button><button class="act-btn" style="padding:4px 10px">Details</button></div></td></tr>
+              <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:10px 14px;font-weight:500">Phoenix</td><td style="padding:10px 14px;color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">phoenix.webxkey.store</td><td style="padding:10px 14px"><span class="badge badge-green">Live</span></td><td style="padding:10px 14px">89d</td><td style="padding:10px 14px;color:var(--color-text-tertiary)">5h ago</td><td style="padding:10px 14px"><div style="display:flex;gap:6px"><button class="act-btn" style="padding:4px 10px">Pull</button><button class="act-btn" style="padding:4px 10px">Details</button></div></td></tr>
+              <tr style="border-top:0.5px solid var(--color-border-tertiary)"><td style="padding:10px 14px;font-weight:500">WebXKey.com</td><td style="padding:10px 14px;color:var(--color-text-secondary);font-family:var(--font-mono);font-size:11px">webxkey.com</td><td style="padding:10px 14px"><span class="badge badge-green">Live</span></td><td style="padding:10px 14px">104d</td><td style="padding:10px 14px;color:var(--color-text-tertiary)">1h ago</td><td style="padding:10px 14px"><div style="display:flex;gap:6px"><button class="act-btn" style="padding:4px 10px">Pull</button><button class="act-btn" style="padding:4px 10px">Details</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let wizardStep = 0;
+const totalSteps = 8;
+const progPct = [12,25,37,50,62,74,87,100];
+
+function showView(name, navEl) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+}
+
+function wizStep(dir) {
+  const oldStep = wizardStep;
+  wizardStep = Math.max(0, Math.min(totalSteps - 1, wizardStep + dir));
+  document.querySelectorAll('.step-content').forEach((s, i) => s.classList.toggle('active', i === wizardStep));
+  document.querySelectorAll('.wstep').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i < wizardStep) s.classList.add('done');
+    if (i === wizardStep) s.classList.add('active');
+  });
+  document.getElementById('wiz-progress').style.width = progPct[wizardStep] + '%';
+  document.getElementById('wiz-step-label').textContent = 'Step ' + (wizardStep + 1) + ' of 8';
+  document.getElementById('wiz-back').disabled = wizardStep === 0;
+  document.getElementById('wiz-back').style.opacity = wizardStep === 0 ? '0.4' : '1';
+  const nextBtn = document.getElementById('wiz-next');
+  nextBtn.textContent = wizardStep === totalSteps - 1 ? 'Finish' : 'Continue →';
+  if (wizardStep === 7) nextBtn.textContent = 'Done';
+}
+
+function resetWizard() {
+  wizardStep = 0;
+  wizStep(0);
+  document.querySelectorAll('.wstep').forEach((s, i) => { s.classList.remove('active', 'done'); if (i === 0) s.classList.add('active'); });
+  document.getElementById('migrate-term').innerHTML = '<span style="color:var(--color-text-tertiary)">Click "Run Migrations" to start...</span>';
+  document.getElementById('seed-btn').disabled = true;
+  document.getElementById('seed-btn').style.opacity = '0.4';
+}
+
+function runMigrate() {
+  const term = document.getElementById('migrate-term');
+  term.innerHTML = '<div style="color:#85B7EB">$ php artisan migrate --force</div>';
+  const lines = [
+    {t:'Migration table created successfully.',c:''},
+    {t:'Migrating: 2024_01_01_000000_create_users_table',c:'line-info'},
+    {t:'Migrated:  2024_01_01_000000_create_users_table (45ms)',c:''},
+    {t:'Migrating: 2024_01_01_000001_create_patients_table',c:'line-info'},
+    {t:'Migrated:  2024_01_01_000001_create_patients_table (31ms)',c:''},
+    {t:'Migrating: 2024_06_15_create_appointments_table',c:'line-info'},
+    {t:'Migrated:  2024_06_15_create_appointments_table (28ms)',c:''},
+    {t:'✓ 12 migrations done.',c:'',col:'#639922'},
+  ];
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i >= lines.length) {
+      clearInterval(iv);
+      document.getElementById('seed-btn').disabled = false;
+      document.getElementById('seed-btn').style.opacity = '1';
+      return;
+    }
+    const d = document.createElement('div');
+    if (lines[i].col) d.style.color = lines[i].col;
+    else if (lines[i].c) d.className = lines[i].c;
+    d.textContent = lines[i].t;
+    term.appendChild(d);
+    term.scrollTop = 9999;
+    i++;
+  }, 300);
+}
+
+function runAction(tile, cmd) {
+  const log = document.getElementById('action-log');
+  log.innerHTML = '<div style="color:#85B7EB">$ ' + cmd + '</div>';
+  const outputs = {
+    'git pull origin main': ['remote: Counting objects: 12, done.', 'remote: Compressing objects: 100% (8/8)', 'Updating a3f9c12..d8e7f01', 'Fast-forward', ' app/Models/Patient.php | 4 ++++', ' 1 file changed, 4 insertions(+)', '✓ Already up to date.'],
+    'artisan optimize:clear': ['Clearing cached bootstrap files...','Application cache cleared!', 'Configuration cache cleared!', 'Route cache cleared!', 'Compiled views cleared!', '✓ Cache cleared successfully.'],
+    'artisan queue:restart': ['Broadcasting queue restart signal.','✓ Queue workers will restart after current job.'],
+    'artisan migrate --force': ['Migrating: 2025_04_20_add_notes_to_patients', 'Migrated:  2025_04_20_add_notes_to_patients (22ms)', '✓ 1 migration done.'],
+  };
+  const lines = outputs[cmd] || ['Running...', '✓ Done.'];
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i >= lines.length) { clearInterval(iv); return; }
+    const d = document.createElement('div');
+    if (lines[i].startsWith('✓')) d.style.color = '#639922';
+    d.textContent = lines[i];
+    log.appendChild(d);
+    log.scrollTop = 9999;
+    i++;
+  }, 250);
+}
+
+function termFlash(btn, label) {
+  const orig = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+  setTimeout(() => { btn.textContent = '✓'; setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 800); }, 900);
+}
+</script>
