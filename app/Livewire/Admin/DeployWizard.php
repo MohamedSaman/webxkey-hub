@@ -245,6 +245,7 @@ class DeployWizard extends Component
         $success = $this->cmd->runMigrate($this->folderName, $log);
         $this->stepRunning = false;
         $this->migrationDone = $success;
+        $this->stepDone = $success;
         $this->stepFailed = !$success;
     }
 
@@ -263,6 +264,7 @@ class DeployWizard extends Component
         $success = $this->cmd->runMigrateFresh($this->folderName, $log);
         $this->stepRunning = false;
         $this->migrationDone = $success;
+        $this->stepDone = $success;
         $this->stepFailed = !$success;
     }
 
