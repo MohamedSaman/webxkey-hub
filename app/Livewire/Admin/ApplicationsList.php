@@ -12,6 +12,7 @@ class ApplicationsList extends Component
 {
     public string $search = '';
     public ?int $confirmDelete = null;
+    public string $deleteFolder = '';
 
     public function updatedSearch(): void
     {
@@ -36,12 +37,15 @@ class ApplicationsList extends Component
     public function confirmDelete(int $appId): void
     {
         $this->confirmDelete = $appId;
+        $this->deleteFolder = Application::find($appId)?->folder_path ?? '';
     }
 
     public function deleteApp(): void
     {
         if ($this->confirmDelete) {
-            Application::findOrFail($this->confirmDelete)->delete();
+            $app = Application::findOrFail($this->confirmDelete);
+            (new ServerCommandService())->deleteFolder($app->folder_path);
+            $app->delete();
             $this->confirmDelete = null;
         }
     }
@@ -49,6 +53,7 @@ class ApplicationsList extends Component
     public function cancelDelete(): void
     {
         $this->confirmDelete = null;
+        $this->deleteFolder = '';
     }
 
     public function render()

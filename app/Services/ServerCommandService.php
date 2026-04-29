@@ -111,7 +111,7 @@ class ServerCommandService
     public function npmBuild(string $folder, DeploymentLog $log): bool
     {
         $path = escapeshellarg("{$this->wwwPath}/{$folder}");
-        $cmd = "cd {$path} && npm install 2>&1 && npm run build 2>&1";
+        $cmd = "cd {$path} && npm install --cache /tmp/.npm-cache 2>&1 && npm run build 2>&1";
         return $this->streamCommand($cmd, $log);
     }
 
@@ -223,6 +223,14 @@ class ServerCommandService
         $sudo = $this->sudo();
         $cmd = "{$sudo} certbot --nginx -d {$safeDomain} --non-interactive --agree-tos -m admin@webxkey.com 2>&1";
         return $this->streamCommand($cmd, $log);
+    }
+
+    public function deleteFolder(string $folder): bool
+    {
+        $path = escapeshellarg("{$this->wwwPath}/{$folder}");
+        $sudo = $this->sudo();
+        $output = $this->runQuick("{$sudo} rm -rf {$path} 2>&1");
+        return empty($output) || !str_contains(strtolower($output), 'error');
     }
 
     public function gitPull(string $folder, string $branch, DeploymentLog $log): bool
