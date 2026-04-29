@@ -30,7 +30,7 @@ class DeployWizard extends Component
     public string $appUrl = '';
     public string $appEnv = 'production';
     public string $dbName = '';
-    public string $dbUser = 'root';
+    public string $dbUser = 'webxkey';
     public string $dbPassword = '';
 
     // Step 6 – Nginx
@@ -174,7 +174,7 @@ class DeployWizard extends Component
     {
         $this->validate(['dbName' => 'required|alpha_dash']);
 
-        $success = $this->cmd->createDatabase($this->dbName);
+        $success = $this->cmd->createDatabase($this->dbName, $this->dbUser, $this->dbPassword);
         Application::where('id', $this->applicationId)->update(['db_name' => $this->dbName]);
         $this->stepDone = $success;
         $this->stepFailed = !$success;
