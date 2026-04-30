@@ -38,7 +38,7 @@
                             $total    = $proposal ? $proposal->grandTotal() : 0;
                             $cardHref = $proposal ? route('proposals.show', $proposal) : '#';
                         @endphp
-                        <a href="{{ $cardHref }}" class="pipeline-card" style="display:block;text-decoration:none;color:inherit;cursor:pointer;">
+                        <div class="pipeline-card" style="cursor:pointer;" onclick="window.location='{{ $cardHref }}'">
                             <div style="font-size:12.5px;font-weight:600;color:var(--text-white);margin-bottom:4px;">
                                 {{ $project->name }}
                             </div>
@@ -56,7 +56,7 @@
                                     Total: <span style="color:var(--text-primary);font-weight:500;">LKR {{ number_format($total, 2) }}</span>
                                 </div>
                             @endif
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;" onclick="event.stopPropagation()">
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
                                 @if($proposal)
                                     <a href="{{ route('proposals.preview', $proposal) }}" target="_blank"
                                        class="btn btn-sm" style="font-size:10.5px;padding:3px 8px;"
@@ -68,7 +68,7 @@
                                        onclick="event.stopPropagation()">Invoice</a>
                                 @endif
                             </div>
-                        </a>
+                        </div>
                     @empty
                         <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px 0;">
                             Empty
