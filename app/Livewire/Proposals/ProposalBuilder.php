@@ -18,6 +18,7 @@ class ProposalBuilder extends Component
 {
     public Proposal $proposal;
     public int $step = 1;
+    public bool $editMode = false;
 
     // Step 1 fields (project / client info & subject)
     public string $date = '';
@@ -65,6 +66,9 @@ class ProposalBuilder extends Component
 
         $this->statusValue = $proposal->status;
         $this->notes       = $proposal->notes ?? '';
+
+        // Start in edit mode only for draft/sent proposals
+        $this->editMode = in_array($proposal->status, ['draft', 'sent'], true);
     }
 
     public function render()
@@ -327,10 +331,15 @@ class ProposalBuilder extends Component
         $this->proposal->load('quotationItems');
     }
 
+    public function toggleEditMode(): void
+    {
+        $this->editMode = ! $this->editMode;
+    }
+
     // ── Step 5: Status / approve ─────────────────────────────────────────
     public function changeStatus(string $status): void
     {
-        if (!in_array($status, ['draft', 'sent', 'approved'], true)) {
+        if (!in_array($status, ['draft', 'sent', 'approved', 'cancelled'], true)) {
             return;
         }
         $this->proposal->update(['status' => $status]);
@@ -342,6 +351,13 @@ class ProposalBuilder extends Component
             if ($this->proposal->project->status === 'draft') {
                 $this->proposal->project->update(['status' => 'pending']);
             }
+        } elseif ($status === 'cancelled') {
+            $this->proposal->project->update(['status' => 'cancelled']);
+        }
+
+        // After approving/cancelling, switch to detail view
+        if (in_array($status, ['approved', 'cancelled'], true)) {
+            $this->editMode = false;
         }
 
         $this->proposal->refresh();
