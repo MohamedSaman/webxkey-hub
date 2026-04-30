@@ -76,7 +76,27 @@
         {{ $slot }}
     </div>
 
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
 </div>
+
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.getElementById('sidebar-overlay').classList.toggle('open');
+    }
+
+    document.getElementById('sidebar-overlay').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on navigation if needed
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 900) {
+                toggleSidebar();
+            }
+        });
+    });
+</script>
 @livewireScripts
 </body>
 </html>

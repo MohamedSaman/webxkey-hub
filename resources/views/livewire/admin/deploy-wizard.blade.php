@@ -1,6 +1,11 @@
 <div>
     <div class="topbar">
-        <div class="page-title">Deploy New App</div>
+        <div style="display:flex;align-items:center">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <div class="page-title">Deploy New App</div>
+        </div>
         <a href="{{ route('dashboard') }}" class="btn">← Back</a>
     </div>
 
@@ -41,7 +46,7 @@
                 {{-- ── STEP 0: Git Clone ── --}}
                 @if($step === 0)
                     <div style="font-size:13px;font-weight:500;margin-bottom:16px">Step 1 — Clone repository</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;">
                         <div class="form-group" style="grid-column:1/-1">
                             <label class="form-label">GitHub Repository URL</label>
                             <input wire:model="gitUrl" class="form-input" type="url" placeholder="https://github.com/webxkey/clinic-system.git">
@@ -99,7 +104,7 @@
 
                     {{-- Auto-built (read-only) --}}
                     <div style="font-size:11px;font-weight:600;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Auto-configured</div>
-                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:8px;margin-bottom:8px;">
                         @foreach([
                             'APP_ENV'        => 'production',
                             'APP_DEBUG'      => 'false',
@@ -133,7 +138,7 @@
 
                     {{-- Editable fields --}}
                     <div style="font-size:11px;font-weight:600;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Edit these</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;">
                         <div class="form-group">
                             <label class="form-label">APP_NAME</label>
                             <input wire:model="appName" class="form-input" type="text" placeholder="Clinic System">
@@ -270,7 +275,7 @@
                                 @endif
                                 <button wire:click="resetWizard" class="btn">Deploy Another</button>
                             </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:400px;margin:0 auto;text-align:left;background:var(--color-bg-secondary);border-radius:var(--radius-md);padding:14px;font-size:11px;">
+                            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:8px;max-width:400px;margin:0 auto;text-align:left;background:var(--color-bg-secondary);border-radius:var(--radius-md);padding:14px;font-size:11px;">
                                 <div><span style="color:var(--color-text-tertiary)">Domain: </span>{{ $domainName }}</div>
                                 <div><span style="color:var(--color-text-tertiary)">Folder: </span>/var/www/{{ $folderName }}</div>
                                 <div><span style="color:var(--color-text-tertiary)">Database: </span>{{ $dbName }}</div>

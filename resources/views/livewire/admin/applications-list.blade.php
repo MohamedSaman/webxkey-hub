@@ -1,14 +1,19 @@
 <div>
     <div class="topbar">
-        <div class="page-title">Client Systems</div>
-        <div style="display:flex;gap:8px;align-items:center">
-            <input wire:model.live="search" type="text" placeholder="Search sites..." class="form-input" style="width:200px;padding:6px 10px;font-size:12px;">
-            <button wire:click="scanAndSyncAll" class="btn" wire:loading.attr="disabled">
-                <span wire:loading.remove wire:target="scanAndSyncAll">⟳ Scan All from Server</span>
-                <span wire:loading wire:target="scanAndSyncAll"><span class="spinner"></span> Scanning...</span>
+        <div style="display:flex;align-items:center">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <button wire:click="openImport" class="btn">+ Register Existing</button>
-            <a href="{{ route('deploy') }}" class="btn btn-primary">+ Deploy New App</a>
+            <div class="page-title">Client Systems</div>
+        </div>
+        <div class="topbar-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+            <input wire:model.live="search" type="text" placeholder="Search..." class="form-input" style="width:140px;padding:6px 10px;font-size:12px;">
+            <button wire:click="scanAndSyncAll" class="btn" wire:loading.attr="disabled">
+                <span wire:loading.remove wire:target="scanAndSyncAll">⟳ Scan</span>
+                <span wire:loading wire:target="scanAndSyncAll">...</span>
+            </button>
+            <button wire:click="openImport" class="btn">+ Register</button>
+            <a href="{{ route('deploy') }}" class="btn btn-primary">+ Deploy</a>
         </div>
     </div>
 
@@ -41,7 +46,7 @@
                 <div style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:12px;">
                     Reading from <code>/var/www/{{ $importFolder }}/.env</code> — edit any field then click Register.
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                <div class="import-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;margin-bottom:12px;">
                     <div class="form-group">
                         <label class="form-label">Folder</label>
                         <input class="form-input" type="text" value="{{ $importFolder }}" disabled style="opacity:0.6;">
@@ -85,7 +90,7 @@
             </div>
         @endif
 
-        <div style="background:var(--color-bg-primary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-lg);overflow:hidden;">
+        <div class="table-responsive" style="background:var(--color-bg-primary);border:0.5px solid var(--color-border-t);border-radius:var(--radius-lg);overflow:hidden;">
             <table class="data-table">
                 <thead>
                     <tr>

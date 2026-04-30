@@ -1,16 +1,21 @@
 <div>
     <div class="topbar">
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <a href="{{ route('dashboard') }}" class="btn">← Back</a>
-            <div class="page-title">{{ $application->name }}</div>
-            @switch($application->status)
-                @case('live')    <span class="badge badge-green">Live</span> @break
-                @case('stopped') <span class="badge badge-gray">Stopped</span> @break
-                @case('error')   <span class="badge badge-red">Error</span> @break
-                @case('deploying')<span class="badge badge-blue">Deploying</span> @break
-            @endswitch
+            <div class="page-title" style="min-width:0;flex:1">{{ $application->name }}</div>
+            <div style="flex-shrink:0">
+                @switch($application->status)
+                    @case('live')    <span class="badge badge-green">Live</span> @break
+                    @case('stopped') <span class="badge badge-gray">Stopped</span> @break
+                    @case('error')   <span class="badge badge-red">Error</span> @break
+                    @case('deploying')<span class="badge badge-blue">Deploying</span> @break
+                @endswitch
+            </div>
         </div>
-        <div style="display:flex;gap:8px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-left:8px;">
             <a href="https://{{ $application->domain }}" target="_blank" class="btn">Open Site ↗</a>
             @if($application->status === 'live')
                 <button wire:click="stopSite" class="btn btn-danger" onclick="return confirm('Stop {{ $application->domain }}?')">Stop Site</button>
@@ -21,7 +26,7 @@
     </div>
 
     <div class="content-area">
-        <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;">
+        <div class="detail-layout">
 
             {{-- Left column --}}
             <div>

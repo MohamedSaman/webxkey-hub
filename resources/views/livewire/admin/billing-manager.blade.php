@@ -2,6 +2,9 @@
     {{-- Topbar --}}
     <div class="topbar">
         <div style="display:flex;align-items:center;gap:12px;">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <div class="page-title">Billing</div>
             <select wire:model.live="year"
                     style="background:var(--bg-input);border:1px solid var(--border-strong);color:var(--text-primary);border-radius:var(--radius-sm);padding:5px 10px;font-size:12.5px;cursor:pointer;">
@@ -10,7 +13,7 @@
                 @endforeach
             </select>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
             <span class="badge" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);font-size:11.5px;">
                 Due: LKR {{ number_format($summary['total_due']) }}
             </span>
@@ -26,7 +29,7 @@
     <div class="content-area">
 
         {{-- Summary Cards --}}
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+        <div class="stats-row">
             <div class="panel" style="padding:16px 20px;">
                 <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Total Due</div>
                 <div style="font-size:22px;font-weight:600;color:var(--red);">LKR {{ number_format($summary['total_due']) }}</div>
@@ -168,7 +171,7 @@
         </div>
 
         {{-- Legend --}}
-        <div style="display:flex;align-items:center;gap:16px;margin-top:12px;padding:10px 16px;background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:16px;margin-top:12px;padding:10px 16px;background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border);flex-wrap:wrap;">
             <span style="font-size:11px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Legend:</span>
             <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--green);">
                 <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:20px;border-radius:4px;border:1px solid var(--green-border);background:var(--green-bg);font-size:11px;font-weight:600;">✓</span>

@@ -276,8 +276,7 @@
         </div>
 
         <div class="logo-block">
-            <div class="logo-icon">⬡</div>
-            <div class="logo-title">WebXKey</div>
+            <div class="logo-title">Webxkey-hub</div>
             <div class="logo-sub">Server Manager</div>
         </div>
 
