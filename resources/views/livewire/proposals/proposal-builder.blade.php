@@ -231,7 +231,7 @@
 
                     {{-- Invoice / actions --}}
                     @if($proposal->status === 'approved')
-                        <div class="panel" style="background:var(--green-bg);border-color:var(--green-border);">
+                        <div class="panel" style="margin-bottom:14px;background:var(--green-bg);border-color:var(--green-border);">
                             <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Proposal Approved</div>
                             @php $existingInvoice = $proposal->project->invoices()->first(); @endphp
                             @if($existingInvoice)
@@ -245,6 +245,17 @@
                             @endif
                         </div>
                     @endif
+
+                    {{-- Delete project --}}
+                    <div class="panel" style="border-color:var(--red-border);">
+                        <div style="font-size:11px;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Danger Zone</div>
+                        <button type="button"
+                                wire:click="deleteProject"
+                                onclick="return confirm('Delete this project and ALL related data (proposal, invoices, payments)? This cannot be undone.')"
+                                class="btn btn-sm btn-danger" style="width:100%;">
+                            Delete Project
+                        </button>
+                    </div>
                 </div>
             </div>
 

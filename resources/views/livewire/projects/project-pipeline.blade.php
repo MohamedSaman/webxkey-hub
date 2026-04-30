@@ -32,7 +32,13 @@
                         <span style="color:var(--text-muted);">{{ $items->count() }}</span>
                     </div>
                     @forelse($items as $project)
-                        <div class="pipeline-card">
+                        @php
+                            $proposal = $project->latestProposal;
+                            $invoice  = $project->invoices->first();
+                            $total    = $proposal ? $proposal->grandTotal() : 0;
+                            $cardHref = $proposal ? route('proposals.show', $proposal) : '#';
+                        @endphp
+                        <a href="{{ $cardHref }}" class="pipeline-card" style="display:block;text-decoration:none;color:inherit;cursor:pointer;">
                             <div style="font-size:12.5px;font-weight:600;color:var(--text-white);margin-bottom:4px;">
                                 {{ $project->name }}
                             </div>
@@ -45,25 +51,24 @@
                                     <span class="badge badge-blue" style="font-size:10px;">{{ $project->agreement_code }}</span>
                                 @endif
                             </div>
-                            @php
-                                $proposal = $project->latestProposal;
-                                $invoice  = $project->invoices->first();
-                                $total    = $proposal ? $proposal->grandTotal() : 0;
-                            @endphp
                             @if($total > 0)
                                 <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">
                                     Total: <span style="color:var(--text-primary);font-weight:500;">LKR {{ number_format($total, 2) }}</span>
                                 </div>
                             @endif
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;" onclick="event.stopPropagation()">
                                 @if($proposal)
-                                    <a href="{{ route('proposals.show', $proposal) }}" class="btn btn-sm" style="font-size:10.5px;padding:3px 8px;">Proposal</a>
+                                    <a href="{{ route('proposals.preview', $proposal) }}" target="_blank"
+                                       class="btn btn-sm" style="font-size:10.5px;padding:3px 8px;"
+                                       onclick="event.stopPropagation()">Proposal PDF</a>
                                 @endif
                                 @if($invoice)
-                                    <a href="{{ route('invoices.show', $invoice) }}" class="btn btn-sm" style="font-size:10.5px;padding:3px 8px;">Invoice</a>
+                                    <a href="{{ route('invoices.show', $invoice) }}"
+                                       class="btn btn-sm" style="font-size:10.5px;padding:3px 8px;"
+                                       onclick="event.stopPropagation()">Invoice</a>
                                 @endif
                             </div>
-                        </div>
+                        </a>
                     @empty
                         <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px 0;">
                             Empty

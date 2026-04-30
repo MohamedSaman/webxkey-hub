@@ -10,17 +10,16 @@
         {{-- Header --}}
         <div class="doc-header">
             <div class="doc-brand">
-                <div class="doc-brand-mark">WebXKey</div>
-                <div class="doc-brand-sub">PVT LTD</div>
+                <img src="{{ asset('webxkey_logo.png') }}" alt="WebXKey" class="doc-logo">
                 <div class="doc-brand-meta">
-                    No 24/A, Kohombiliyawa,<br>
-                    Kalagedihena, Nittambuwa<br>
-                    Sri Lanka<br>
-                    +94 71 234 5678 · admin@webxkey.com
+                    <strong>WEBXKEY PVT LTD</strong><br>
+                    273/1 D Warana Road, Central Place,<br>
+                    Thihariya<br>
+                    +94 755 299 721
                 </div>
             </div>
             <div class="doc-meta">
-                <div class="doc-meta-row"><span>Date:</span><strong>{{ $proposal->date?->format('M d, Y') }}</strong></div>
+                <div class="doc-meta-row"><span>Date:</span><strong>{{ $proposal->date?->format('d M Y') }}</strong></div>
                 <div class="doc-meta-row"><span>Code:</span><strong>{{ $proposal->project->agreement_code }}</strong></div>
             </div>
         </div>
@@ -184,16 +183,11 @@
             display: flex; justify-content: space-between; align-items: flex-start;
             border-bottom: 2px solid #1f2937; padding-bottom: 16px; margin-bottom: 22px;
         }
-        .doc-brand-mark {
-            font-size: 24px; font-weight: 800; color: #1d4ed8;
-            letter-spacing: -0.5px;
-        }
-        .doc-brand-sub {
-            font-size: 11px; font-weight: 600; color: #6b7280;
-            letter-spacing: 0.18em; margin-top: -2px;
+        .doc-logo {
+            height: 52px; width: auto; display: block; margin-bottom: 8px;
         }
         .doc-brand-meta {
-            font-size: 11px; color: #4b5563; margin-top: 8px; line-height: 1.5;
+            font-size: 11px; color: #1f2937; line-height: 1.6;
         }
         .doc-meta { text-align: right; font-size: 12px; }
         .doc-meta-row { margin-bottom: 4px; }

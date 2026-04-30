@@ -8,13 +8,12 @@
         {{-- Header --}}
         <div class="inv-head">
             <div class="inv-brand">
-                <div class="inv-brand-mark">WebXKey</div>
-                <div class="inv-brand-sub">PVT LTD</div>
+                <img src="{{ asset('webxkey_logo.png') }}" alt="WebXKey" class="inv-logo">
                 <div class="inv-brand-meta">
-                    No 24/A, Kohombiliyawa,<br>
-                    Kalagedihena, Nittambuwa<br>
-                    Sri Lanka<br>
-                    +94 71 234 5678
+                    <strong>WEBXKEY PVT LTD</strong><br>
+                    273/1 D Warana Road, Central Place,<br>
+                    Thihariya<br>
+                    +94 755 299 721
                 </div>
             </div>
             <div class="inv-title">
@@ -107,9 +106,8 @@
             font-size: 12px; line-height: 1.55;
         }
         .inv-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; }
-        .inv-brand-mark { font-size: 24px; font-weight: 800; color: #1d4ed8; letter-spacing: -0.5px; }
-        .inv-brand-sub { font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.18em; margin-top: -2px; }
-        .inv-brand-meta { font-size: 11px; color: #4b5563; margin-top: 8px; }
+        .inv-logo { height: 52px; width: auto; display: block; margin-bottom: 8px; }
+        .inv-brand-meta { font-size: 11px; color: #1f2937; line-height: 1.6; }
         .inv-title { text-align: right; }
         .inv-title-text { font-size: 38px; font-weight: 800; color: #1f2937; letter-spacing: 1px; }
         .inv-number { font-size: 14px; color: #6b7280; margin-top: 2px; }

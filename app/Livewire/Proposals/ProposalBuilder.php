@@ -364,6 +364,14 @@ class ProposalBuilder extends Component
         session()->flash('message', 'Proposal status updated to ' . ucfirst($status) . '.');
     }
 
+    public function deleteProject()
+    {
+        $project = $this->proposal->project;
+        $project->delete();
+
+        return redirect()->route('projects');
+    }
+
     public function createInvoice()
     {
         $this->saveCurrentStep();
