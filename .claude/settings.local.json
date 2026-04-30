@@ -1,7 +1,22 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "PowerShell(php -l app/Livewire/Clients/ClientManager.php)",
+      "PowerShell(php -l app/Livewire/Projects/ProjectPipeline.php)",
+      "PowerShell(php -l app/Livewire/Proposals/ProposalBuilder.php)",
+      "PowerShell(php -l app/Livewire/Proposals/ProposalPreview.php)",
+      "PowerShell(php -l app/Livewire/Invoices/InvoiceBuilder.php)",
+      "PowerShell(php -l app/Livewire/Invoices/InvoicePreview.php)",
+      "PowerShell(php -l app/Models/Client.php)",
+      "PowerShell(php -l app/Models/Project.php)",
+      "PowerShell(php -l app/Models/Proposal.php)",
+      "PowerShell(php -l app/Models/ProposalModule.php)",
+      "PowerShell(php -l app/Models/ProposalFeature.php)",
+      "PowerShell(php -l app/Models/ProposalQuotationItem.php)",
+      "PowerShell(php -l app/Models/Invoice.php)",
+      "PowerShell(php -l app/Models/InvoiceItem.php)",
+      "PowerShell(php -l app/Models/ProjectPayment.php 2>&1)"
     ]
   }
 }

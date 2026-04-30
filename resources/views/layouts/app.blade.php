@@ -49,6 +49,22 @@
             Billing
         </a>
 
+        <div class="nav-section">Clients</div>
+        <a href="{{ route('clients') }}" class="nav-item {{ request()->routeIs('clients') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
+                <circle cx="8" cy="5" r="3"/>
+                <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            Clients
+        </a>
+        <a href="{{ route('projects') }}" class="nav-item {{ request()->routeIs('projects*') || request()->routeIs('proposals*') || request()->routeIs('invoices*') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="2" y="4" width="12" height="9" rx="1"/>
+                <path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            Projects
+        </a>
+
         <div class="nav-section">Server</div>
         <a href="{{ route('applications') }}" class="nav-item {{ request()->routeIs('deployments') ? 'active' : '' }}">
             <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
