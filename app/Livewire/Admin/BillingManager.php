@@ -67,8 +67,9 @@ class BillingManager extends Component
         ])->title('Billing');
     }
 
-    public function setPlan(int $appId, int $planId): void
+    public function setPlan(int $appId, $planId): void
     {
+        $planId = $planId ?: null;
         Application::find($appId)->update(['billing_plan_id' => $planId]);
         session()->flash('message', 'Billing plan updated.');
     }
