@@ -46,11 +46,11 @@ class ProjectPipeline extends Component
             ->get();
 
         $columns = [
-            'draft'     => $projects->where('status', 'draft')->values(),
-            'pending'   => $projects->where('status', 'pending')->values(),
+            'pending'   => $projects->where('status', 'pending')->merge($projects->where('status', 'draft'))->values(),
             'approved'  => $projects->where('status', 'approved')->values(),
             'ongoing'   => $projects->where('status', 'ongoing')->values(),
             'completed' => $projects->where('status', 'completed')->values(),
+            'cancelled' => $projects->where('status', 'cancelled')->values(),
         ];
 
         return view('livewire.projects.project-pipeline', [
@@ -124,7 +124,7 @@ class ProjectPipeline extends Component
             'type'           => $this->projectType,
             'description'    => $this->projectDescription ?: null,
             'agreement_code' => $this->agreementCode,
-            'status'         => 'draft',
+            'status'         => 'pending',
         ]);
 
         $client = Client::find($clientId);

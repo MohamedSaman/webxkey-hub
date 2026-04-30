@@ -18,11 +18,11 @@
         <div class="pipeline-grid">
             @php
                 $columnsMeta = [
-                    'draft'     => ['label' => 'Draft',     'color' => 'var(--text-muted)'],
                     'pending'   => ['label' => 'Pending',   'color' => 'var(--yellow)'],
                     'approved'  => ['label' => 'Approved',  'color' => 'var(--blue)'],
                     'ongoing'   => ['label' => 'Ongoing',   'color' => 'var(--accent)'],
                     'completed' => ['label' => 'Completed', 'color' => 'var(--green)'],
+                    'cancelled' => ['label' => 'Cancelled', 'color' => 'var(--red)'],
                 ];
             @endphp
             @foreach($columns as $key => $items)
