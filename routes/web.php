@@ -20,4 +20,5 @@ Route::middleware('server-auth')->group(function () {
     Route::get('/deploy', DeployWizard::class)->name('deploy');
     Route::get('/applications/{application}', SiteDetail::class)->name('applications.show');
     Route::get('/billing', BillingManager::class)->name('billing');
+    Route::get('/billing/settings', \App\Livewire\Admin\BillingSettings::class)->name('billing.settings');
 });

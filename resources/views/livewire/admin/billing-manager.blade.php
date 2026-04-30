@@ -12,6 +12,10 @@
                     <option value="{{ $y }}">{{ $y }}</option>
                 @endforeach
             </select>
+            <a href="{{ route('billing.settings') }}" class="btn btn-sm" title="Manage Plans">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Plans
+            </a>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
             <span class="badge" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);font-size:11.5px;">
@@ -50,7 +54,7 @@
             <div class="panel" style="padding:16px 20px;">
                 <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Apps Managed</div>
                 <div style="font-size:22px;font-weight:600;color:var(--accent);">{{ $applications->count() }}</div>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">@ LKR 2,000/mo each</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Dynamic hosting rates</div>
             </div>
         </div>
 
@@ -83,7 +87,17 @@
                         <tr style="border-bottom:1px solid var(--border);" class="billing-row">
                             <td style="padding:10px 12px;white-space:nowrap;">
                                 <div style="font-size:13px;font-weight:500;color:var(--text-white);">{{ $app->name }}</div>
-                                <div style="font-size:11px;color:var(--text-muted);">{{ $app->domain }}</div>
+                                <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+                                    <select wire:change="setPlan({{ $app->id }}, $event.target.value)" 
+                                            style="background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-secondary);font-size:10px;padding:2px 4px;border-radius:3px;cursor:pointer;">
+                                        <option value="">No Plan</option>
+                                        @foreach($plans as $p)
+                                            <option value="{{ $p->id }}" {{ $app->billing_plan_id == $p->id ? 'selected' : '' }}>
+                                                {{ $p->name }} ({{ number_format($p->price) }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </td>
 
                             @for($m = 1; $m <= 12; $m++)
@@ -151,8 +165,9 @@
                                 <button wire:click="applyAnnualDeal({{ $app->id }})"
                                         wire:loading.attr="disabled"
                                         wire:target="applyAnnualDeal({{ $app->id }})"
-                                        onclick="return confirm('Apply annual deal for {{ addslashes($app->name) }}?\n\nMonths 1–10 → Paid (LKR 2,000 each)\nMonths 11–12 → FREE\n\nThis will overwrite existing records.')"
-                                        class="btn btn-sm btn-primary"
+                                        @if(!$app->billingPlan) disabled title="Select a plan first" @endif
+                                        onclick="return confirm('Apply annual deal for {{ addslashes($app->name) }}?\n\nMonths 1–10 → Paid ({{ $app->billingPlan ? 'LKR ' . number_format($app->billingPlan->price) : 'No Plan selected' }})\nMonths 11–12 → FREE\n\nThis will overwrite existing records.')"
+                                        class="btn btn-sm {{ $app->billingPlan ? 'btn-primary' : 'btn-gray' }}"
                                         style="white-space:nowrap;font-size:11px;">
                                     <span wire:loading.remove wire:target="applyAnnualDeal({{ $app->id }})">Annual Deal</span>
                                     <span wire:loading wire:target="applyAnnualDeal({{ $app->id }})"><span class="spinner"></span></span>

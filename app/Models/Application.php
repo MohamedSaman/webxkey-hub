@@ -10,8 +10,13 @@ class Application extends Model
     protected $fillable = [
         'name', 'domain', 'folder_path', 'git_repo', 'branch',
         'db_name', 'nginx_config', 'status', 'php_version',
-        'last_pull_at', 'last_deployed_at',
+        'last_pull_at', 'last_deployed_at', 'billing_plan_id',
     ];
+
+    public function billingPlan()
+    {
+        return $this->belongsTo(BillingPlan::class);
+    }
 
     protected $casts = [
         'last_pull_at' => 'datetime',
