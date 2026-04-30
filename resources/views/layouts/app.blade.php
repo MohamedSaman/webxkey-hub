@@ -64,6 +64,15 @@
             </svg>
             Projects
         </a>
+        <a href="{{ route('earnings') }}" class="nav-item {{ request()->routeIs('earnings') ? 'active' : '' }}">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="1" y="10" width="3" height="5" rx=".5"/>
+                <rect x="6" y="6" width="3" height="9" rx=".5"/>
+                <rect x="11" y="2" width="3" height="13" rx=".5"/>
+                <path d="M1 8l4-4 4 3 5-5" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </svg>
+            Earnings
+        </a>
 
         <div class="nav-section">Server</div>
         <a href="{{ route('applications') }}" class="nav-item {{ request()->routeIs('deployments') ? 'active' : '' }}">

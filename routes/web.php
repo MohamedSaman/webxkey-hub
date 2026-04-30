@@ -7,6 +7,7 @@ use App\Livewire\Admin\ApplicationsList;
 use App\Livewire\Admin\DeployWizard;
 use App\Livewire\Admin\SiteDetail;
 use App\Livewire\Clients\ClientManager;
+use App\Livewire\Finance\EarningsOverview;
 use App\Livewire\Invoices\InvoiceBuilder;
 use App\Livewire\Invoices\InvoicePreview;
 use App\Livewire\Projects\ProjectPipeline;
@@ -41,4 +42,7 @@ Route::middleware('server-auth')->group(function () {
     // Invoices
     Route::get('/invoices/{invoice}', InvoiceBuilder::class)->name('invoices.show');
     Route::get('/invoices/{invoice}/preview', InvoicePreview::class)->name('invoices.preview');
+
+    // Finance
+    Route::get('/earnings', EarningsOverview::class)->name('earnings');
 });
