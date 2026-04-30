@@ -60,8 +60,17 @@
 
         {{-- Per-App Payment Table --}}
         <div class="panel" style="overflow-x:auto;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-                <span style="font-size:13px;font-weight:600;color:var(--text-white);">Monthly Payment Tracker — {{ $year }}</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <span style="font-size:13px;font-weight:600;color:var(--text-white);">Monthly Payment Tracker — {{ $year }}</span>
+                    <select wire:model.live="filterPlanId" 
+                            style="background:var(--bg-elevated);border:1px solid var(--border-strong);color:var(--text-primary);border-radius:var(--radius-sm);padding:4px 8px;font-size:11.5px;cursor:pointer;">
+                        <option value="">All Hosting Plans</option>
+                        @foreach($plans as $p)
+                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <span style="font-size:11.5px;color:var(--text-muted);">Click a cell to toggle paid/due status</span>
             </div>
 

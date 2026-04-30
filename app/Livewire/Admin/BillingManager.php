@@ -15,6 +15,7 @@ class BillingManager extends Component
     public array $years = [];
     public ?int $markingAppId = null;
     public $billingPlans;
+    public ?int $filterPlanId = null;
 
     public function mount(): void
     {
@@ -26,21 +27,32 @@ class BillingManager extends Component
     public function render()
     {
         $applications = Application::orderBy('name')
+            ->when($this->filterPlanId, fn($q) => $q->where('billing_plan_id', $this->filterPlanId))
             ->with(['billingPlan', 'payments' => fn($q) => $q->where('year', $this->year)])
             ->get();
 
-        // Build summary
-        $allPayments = Payment::whereIn('application_id', $applications->pluck('id'))
-            ->where('year', $this->year)
-            ->get();
+        // Build summary accurately
+        $totalDue = 0;
+        $totalPaid = 0;
+        $overdueCount = 0;
+        $currentMonth = ($this->year === now()->year) ? now()->month : 12;
 
-        $totalDue    = $allPayments->where('status', 'due')
-                                   ->where('month', '<=', now()->month)
-                                   ->sum('amount');
-        $totalPaid   = $allPayments->where('status', 'paid')->sum('amount');
-        $overdueCount = $allPayments->where('status', 'due')
-                                    ->where('month', '<=', now()->month)
-                                    ->count();
+        foreach ($applications as $app) {
+            $planPrice = $app->billingPlan->price ?? 0;
+            $appPayments = $app->payments;
+
+            for ($m = 1; $m <= $currentMonth; $m++) {
+                $p = $appPayments->firstWhere('month', $m);
+                
+                if (!$p || $p->status === 'due') {
+                    $totalDue += $planPrice;
+                    $overdueCount++;
+                } elseif ($p->status === 'paid') {
+                    $totalPaid += $p->amount;
+                }
+                // 'free' status doesn't add to either
+            }
+        }
 
         $summary = [
             'total_due'     => $totalDue,
